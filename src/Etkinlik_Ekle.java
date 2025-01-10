@@ -1,16 +1,197 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Etkinlik_Ekle extends JFrame {
     private etkinlik Etkinlik;
+    private JLabel lbl_tur;
+    private JComboBox<etkinlik.TYPE> cmb_tur;
+    private JLabel lbl_adi;
+    private JTextField fld_adi;
+    private JLabel lbl_tarih;
+    private JTextField fld_tarihi;
+    private JComboBox cmb_salon;
+    private JLabel lbl_salon;
+    private JLabel lbl_fiyat;
+    private JTextField fld_fiyat;
+    private JButton btn_etkinlik_ekleKydt;
+    private JLabel lbl_baslik;
+    private JPanel pnl_etknlkEkleGuncelle;
+    private Connection conn;
+
+    public Etkinlik_Ekle() {
+
+    }
+
+    public boolean guncelle(etkinlik Etkinlik){
+        String query = "UPDATE etkinlikler SET " +
+                "etkinlik_adi =? ," +
+                "etkinlik_turu =? ," +
+                "etkinlik_tarihi =? ," +
+                "salon_id =? ," +
+                "etkinlik_fiyati =? " +
+                "WHERE etkinlik_id=?";
+        this.conn = VeriTabaniBaglantisi.getConnection();
+        try {
+            PreparedStatement pr = this.conn.prepareStatement(query);
+
+            String tarih = Helper.TarihKontrol(Etkinlik.getEtkinlik_tar(), "dd/MM/yyyy");
+            if (tarih == null){
+                Helper.Mesaj("Geçerli bir tarih formatı giriniz");
+                return false;
+            }
+
+            String formattedDate = Helper.convertDateFormat(tarih); //Dönüştürdüm uygun formata
+
+
+            pr.setString(1,Etkinlik.getEtkinlik_ad());
+            pr.setString(2,Etkinlik.getEtkinlik_turu().toString());
+            pr.setString(3,formattedDate);
+            pr.setInt(4,Etkinlik.getSalon_id());
+            pr.setInt(5,Etkinlik.getEtkinlikFiyat());
+            pr.setInt(6,Etkinlik.getEtkinlikid());
+
+            int rowsAffected = pr.executeUpdate(); // Güncellenen satır sayısını al
+            if (rowsAffected > 0) {
+                Helper.Mesaj("Etkinlik başarıyla güncellendi.");
+                return true;
+            }else {
+                Helper.Mesaj("Etkinlik güncellenemedi.");
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Helper.Mesaj("Güncelleme işlemi sırasında bir hata oluştu.");
+            return false;
+        }
+    }
+
+    public boolean sil(int etkinlik_id){
+        String query = "DELETE FROM etkinlikler WHERE etkinlik_id=?";
+        this.conn = VeriTabaniBaglantisi.getConnection();
+        try {
+            PreparedStatement pr = this.conn.prepareStatement(query);
+            pr.setInt(1,etkinlik_id);
+            return pr.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Helper.Mesaj("Silme işlemi sırasında bir hata oluştu.");
+            return false;
+        }
+    }
+
+    public boolean etknlkkaydet (etkinlik Etkinlik){
+        String tarih = Helper.TarihKontrol(Etkinlik.getEtkinlik_tar(), "dd/MM/yyyy");
+        String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES ('"
+                + Etkinlik.getEtkinlik_ad() + "', '"
+                + Etkinlik.getEtkinlik_turu().toString() + "', '"
+                + tarih + "','"
+                + Etkinlik.getSalon_id() + "', '"
+                + Etkinlik.getEtkinlikFiyat() + "')";
+        this.conn = VeriTabaniBaglantisi.getConnection();
+        try {
+            Statement st = this.conn.createStatement();
+            int result = st.executeUpdate(query);
+            return result > 0;
+        } catch (SQLException e) {
+            Helper.Mesaj("Veri tabanı bağlantı hatası: " + e.getMessage());
+            return false;
+        }catch (Exception e) {
+            Helper.Mesaj( "Beklenmeyen Hata: " + e.getMessage());
+            return false;
+        }
+    }
+
     public Etkinlik_Ekle(etkinlik Etkinlik) {
+        add(pnl_etknlkEkleGuncelle);
         this.Etkinlik = Etkinlik;
-        this.setTitle("Etkinlik Ekle");
+        this.setTitle("Etkinlik Ekle/Düzenle");
         this.setSize(500,700);
         int x = (Toolkit.getDefaultToolkit().getScreenSize().width - this.getSize().width) / 2;
         int y = (Toolkit.getDefaultToolkit().getScreenSize().height - this.getSize().height) / 2;
 
         this.setLocation(x, y);
         this.setVisible(true);
+
+        lbl_baslik.setFont(new Font("Serif", Font.BOLD, 22));
+        lbl_tur.setFont(new Font("Serif", Font.PLAIN, 20));
+        lbl_adi.setFont(new Font("Serif", Font.PLAIN, 20));
+        lbl_tarih.setFont(new Font("Serif", Font.PLAIN, 20));
+        fld_adi.setFont(new Font("Serif", Font.PLAIN, 20));
+        fld_tarihi.setFont(new Font("Serif", Font.PLAIN, 20));
+        cmb_salon.setFont(new Font("Serif", Font.PLAIN, 20));
+        cmb_tur.setFont(new Font("Serif", Font.PLAIN, 20));
+        lbl_salon.setFont(new Font("Serif", Font.PLAIN, 20));
+        lbl_fiyat.setFont(new Font("Serif", Font.PLAIN, 20));
+        fld_fiyat.setFont(new Font("Serif", Font.PLAIN, 20));
+        btn_etkinlik_ekleKydt.setFont(new Font("Serif", Font.PLAIN, 20));
+
+        this.cmb_tur.setModel(new DefaultComboBoxModel<>(etkinlik.TYPE.values()));
+
+        cmb_salon.addItem(1);
+        cmb_salon.addItem(2);
+        cmb_salon.addItem(3);
+        cmb_salon.addItem(4);
+        cmb_salon.addItem(5);
+
+        if (this.Etkinlik.getEtkinlikid() == 0) {
+            this.lbl_baslik.setText("Etkinlik Ekle");
+        }else {
+            this.lbl_baslik.setText("Etkinlik Düzenle");
+            this.fld_adi.setText(this.Etkinlik.getEtkinlik_ad());
+            this.fld_fiyat.setText(String.valueOf(this.Etkinlik.getEtkinlikFiyat()));
+            this.fld_tarihi.setText(this.Etkinlik.getEtkinlik_tar());
+            this.cmb_tur.getModel().setSelectedItem(this.Etkinlik.getEtkinlik_turu());
+            this.cmb_salon.getModel().setSelectedItem(this.Etkinlik.getSalon_id());
+        }
+
+
+        btn_etkinlik_ekleKydt.addActionListener(e ->{
+            this.conn = VeriTabaniBaglantisi.getConnection();
+            JTextField[] kontrolListe = {this.fld_fiyat,this.fld_adi};
+            if (Helper.FieldListeliKontrol(kontrolListe)) {
+                Helper.Mesaj("bos");
+            }else if(Helper.TarihKontrol(this.fld_tarihi.getText(), "dd/MM/yyyy") == null){
+                Helper.Mesaj("Lütfen geçerli bir tarih giriniz (dd/MM/yyyy formatında)!");
+            }else{
+                try{
+                    boolean result = false;
+                    this.Etkinlik.setEtkinlik_ad(this.fld_adi.getText());
+                    this.Etkinlik.setEtkinlik_tar(this.fld_tarihi.getText());
+                    this.Etkinlik.setSalon_id(this.cmb_salon.getSelectedIndex() + 1);
+                    this.Etkinlik.setEtkinlik_turu(etkinlik.TYPE.valueOf(this.cmb_tur.getSelectedItem().toString()));
+                    this.Etkinlik.setEtkinlikFiyat(Integer.parseInt(this.fld_fiyat.getText()));
+
+//                    Mudur_islem mudurIslem = new Mudur_islem();
+
+                    if(this.Etkinlik.getEtkinlikid() == 0){
+                        result = this.etknlkkaydet(this.Etkinlik);
+                    }else{
+                        result = this.guncelle(this.Etkinlik);
+                    }
+
+                    if (result){
+                        Helper.Mesaj("basarili");
+                        dispose();
+                    }else{
+                        Helper.Mesaj("error");
+                    }
+                } catch (Exception exception){
+                    Helper.Mesaj("Hata: " + exception.getMessage());
+                }
+
+
+            }
+
+        });
     }
 }

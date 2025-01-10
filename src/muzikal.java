@@ -16,8 +16,8 @@
             this.soyleyen = soyleyen;
         }
 
-        public muzikal(String etkinlik_ad, String etkinlik_tar, String etkinlik_turu, int etkinlikFiyat, int etkinlikid, String salon, String muzik_ad, String muzik_tarih, String muzik_turu, String soyleyen) {
-            super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon);
+        public muzikal(String etkinlik_ad, String etkinlik_tar, TYPE etkinlik_turu, int etkinlikFiyat, int etkinlikid, int salon_id, String muzik_ad, String muzik_tarih, String muzik_turu, String soyleyen) {
+            super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon_id);
             this.muzik_ad = muzik_ad;
             this.muzik_tarih = muzik_tarih;
             this.muzik_turu = muzik_turu;

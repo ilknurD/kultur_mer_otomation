@@ -14,8 +14,8 @@ public class tiyatro extends etkinlik{
         this.oyun_turu = oyun_turu;
     }
 
-    public tiyatro(String etkinlik_ad, String etkinlik_tar, String etkinlik_turu, int etkinlikFiyat, int etkinlikid, String salon, String oyun_adi, String oyun_tarih, String oyun_turu) {
-        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon);
+    public tiyatro(String etkinlik_ad, String etkinlik_tar, TYPE etkinlik_turu, int etkinlikFiyat, int etkinlikid, int salon_id, String oyun_adi, String oyun_tarih, String oyun_turu) {
+        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon_id);
         this.oyun_adi = oyun_adi;
         this.oyun_tarih = oyun_tarih;
         this.oyun_turu = oyun_turu;

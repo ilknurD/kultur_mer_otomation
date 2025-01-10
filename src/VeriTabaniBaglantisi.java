@@ -12,9 +12,9 @@ public class VeriTabaniBaglantisi {
         try {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
             System.out.println("Bağlantı başarılı!");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println("Bağlantı sırasında bir hata oluştu: " + e.getMessage());
-            e.printStackTrace();
+            Helper.Mesaj(e.getMessage());
         }
         return connection;
     }

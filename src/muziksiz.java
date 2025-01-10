@@ -13,8 +13,8 @@ public class muziksiz extends tiyatro{
     public void sosyal_mesaj_sil(){};
     public void sosyal_mesaj_listele(){};
 
-    public muziksiz(String etkinlik_ad, String etkinlik_tar, String etkinlik_turu, int etkinlikFiyat, int etkinlikid, String salon, String oyun_adi, String oyun_tarih, String oyun_turu, String alt_kategori, String anatema, String konu_tipi) {
-        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon, oyun_adi, oyun_tarih, oyun_turu);
+    public muziksiz(String etkinlik_ad, String etkinlik_tar, TYPE etkinlik_turu, int etkinlikFiyat, int etkinlikid, int salon_id, String oyun_adi, String oyun_tarih, String oyun_turu, String alt_kategori, String anatema, String konu_tipi) {
+        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon_id, oyun_adi, oyun_tarih, oyun_turu);
         Alt_kategori = alt_kategori;
         this.anatema = anatema;
         this.konu_tipi = konu_tipi;

@@ -1,6 +1,51 @@
 import javax.swing.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.sql.SQLException;
 
 public class Helper {
+    private Connection conn;
+
+    public Helper() {
+
+    }
+
+
+    public static String convertDateFormat(String dateStr) {
+        try {
+            // Eski format (dd/MM/yyyy)
+            SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
+            // Yeni format (yyyy-MM-dd)
+            SimpleDateFormat newFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+            // Tarih string'ini Date objesine dönüştür
+            Date date = oldFormat.parse(dateStr);
+
+            // Tarihi yeni formata çevir ve döndür
+            return newFormat.format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;  // Hata durumunda null döndür
+        }
+    }
+    public static String TarihKontrol(String dateStr, String format) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        try {
+            sdf.setLenient(false);
+            Date date = sdf.parse(dateStr);
+            return dateStr;  // Geçerli tarih, format ile uyumlu
+        } catch (Exception e) {
+            return null;  // Geçersiz tarih
+        }
+    }
+
+
+
     public static boolean textFieldIslem(JTextField field) {
         return field.getText().trim().isEmpty(); //boş mu, metin mi, boşluk var mı
     }
@@ -47,4 +92,5 @@ public class Helper {
         }
         JOptionPane.showMessageDialog(null, msj, baslik, JOptionPane.INFORMATION_MESSAGE);
     }
+
 }

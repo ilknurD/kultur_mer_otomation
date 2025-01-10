@@ -20,8 +20,8 @@ public class sinema extends etkinlik{
         this.id = id;
     }
 
-    public sinema(String etkinlik_ad, String etkinlik_tar, String etkinlik_turu, int etkinlikFiyat, int etkinlikid, String salon, String film_adi, String film_saati, String film_tarih, String film_turu, String film_vizyon, int id) {
-        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon);
+    public sinema(String etkinlik_ad, String etkinlik_tar, TYPE etkinlik_turu, int etkinlikFiyat, int etkinlikid, int salon_id, String film_adi, String film_saati, String film_tarih, String film_turu, String film_vizyon, int id) {
+        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon_id);
         this.film_adi = film_adi;
         this.film_saati = film_saati;
         this.film_tarih = film_tarih;

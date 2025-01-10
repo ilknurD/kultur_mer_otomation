@@ -13,15 +13,15 @@ public class muzikli extends tiyatro{
     public void dans_turu_sil(){};
     public void dans_turu_listele(){};
 
-    public muzikli(String oyun_adi, String oyun_tarih, String oyun_turu, String muzik_turu, String tur_Alt_kategori, String yas_grubu) {
-        super(oyun_adi, oyun_tarih, oyun_turu);
+    public muzikli(String etkinlik_ad, String etkinlik_tar, TYPE etkinlik_turu, int etkinlikFiyat, int etkinlikid, int salon_id, String oyun_adi, String oyun_tarih, String oyun_turu, String muzik_turu, String tur_Alt_kategori, String yas_grubu) {
+        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon_id, oyun_adi, oyun_tarih, oyun_turu);
         this.muzik_turu = muzik_turu;
         Tur_Alt_kategori = tur_Alt_kategori;
         this.yas_grubu = yas_grubu;
     }
 
-    public muzikli(String etkinlik_ad, String etkinlik_tar, String etkinlik_turu, int etkinlikFiyat, int etkinlikid, String salon, String oyun_adi, String oyun_tarih, String oyun_turu, String muzik_turu, String tur_Alt_kategori, String yas_grubu) {
-        super(etkinlik_ad, etkinlik_tar, etkinlik_turu, etkinlikFiyat, etkinlikid, salon, oyun_adi, oyun_tarih, oyun_turu);
+    public muzikli(String oyun_adi, String oyun_tarih, String oyun_turu, String muzik_turu, String tur_Alt_kategori, String yas_grubu) {
+        super(oyun_adi, oyun_tarih, oyun_turu);
         this.muzik_turu = muzik_turu;
         Tur_Alt_kategori = tur_Alt_kategori;
         this.yas_grubu = yas_grubu;

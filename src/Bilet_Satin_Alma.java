@@ -48,9 +48,9 @@ public class Bilet_Satin_Alma extends JFrame {
 
     public Bilet_Satin_Alma(){
        add(biletAlPNL);
-       setSize(1920, 1080);
        setTitle("Bilet Satın Alma Sayfası");
        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+       setExtendedState(JFrame.MAXIMIZED_BOTH);
        setLocationRelativeTo(null);
 
 
