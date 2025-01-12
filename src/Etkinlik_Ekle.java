@@ -1,15 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Etkinlik_Ekle extends JFrame {
     private etkinlik Etkinlik;
@@ -75,7 +69,7 @@ public class Etkinlik_Ekle extends JFrame {
         }
     }
 
-    public boolean sil(int etkinlik_id){
+    public boolean silEtkinlik(int etkinlik_id){
         String query = "DELETE FROM etkinlikler WHERE etkinlik_id=?";
         this.conn = VeriTabaniBaglantisi.getConnection();
         try {

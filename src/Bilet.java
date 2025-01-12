@@ -237,4 +237,41 @@ public class Bilet {
         return karsilastirBilet;
     }
 
+    public Bilet getBiletById(int id) {
+        Bilet bilet = null;
+        String query = "SELECT b.*, m.ad as musteri_adi, m.soyad as musteri_soyad, " +
+                "m.telefon as musteri_telefon, e.etkinlik_turu, e.etkinlik_ad, " +
+                "s.salon_adi, e.etkinlik_fiyat " +
+                "FROM biletler b " +
+                "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +
+                "LEFT JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
+                "LEFT JOIN salonlar s ON b.salon_id = s.salon_id " +
+                "WHERE b.bilet_id = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                bilet = biletCekVeritabani(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bilet;
+    }
+
+    public boolean silBilet(int id) {
+        String query = "DELETE FROM biletler WHERE bilet_id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

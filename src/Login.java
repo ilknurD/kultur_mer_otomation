@@ -35,10 +35,12 @@ public class Login  extends JFrame {
 
         ImageIcon imageIcon = new ImageIcon("C:\\Users\\90539\\Downloads\\397057724_11539820.png");
         Image image = imageIcon.getImage();
-        Image scaledImage = image.getScaledInstance(90, 90, Image.SCALE_SMOOTH);  // 200x200 boyutlarına getiriyoruz
+        Image scaledImage = image.getScaledInstance(90, 90, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         JLabel imgLbl = img_lbl;
         imgLbl.setIcon(scaledIcon);
+
+
 
         button1.addActionListener(new ActionListener() {
             @Override
@@ -58,17 +60,14 @@ public class Login  extends JFrame {
                 kisi Kisi = kullaniciIslem.kullaniciKontrol(mail, pass);
 
                 if (Kisi != null && Kisi.getMail() != null) {
-                    Helper.Mesaj("Başarılı");
-
-                    // Kullanıcı türüne göre yönlendirme
                     if (Kisi instanceof Kasiyer) {
-                        Helper.Mesaj("Kasiyer olarak giriş yaptınız.");
-                        dispose(); // Mevcut pencereyi kapat
-                        Bilet_Satin_Alma blt = new Bilet_Satin_Alma(); // Kasiyerler için bilet satın alma sayfası
+                        JOptionPane.showMessageDialog(null,"Kasiyer olarak giriş yaptınız.","Hoşgeldiniz",JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
+                        Bilet_Satin_Alma blt = new Bilet_Satin_Alma();
                         blt.setVisible(true);
                     } else if (Kisi instanceof Mudur) {
-                        Helper.Mesaj("Müdür olarak giriş yaptınız.");
-                        dispose(); // Mevcut pencereyi kapat
+                        JOptionPane.showMessageDialog(null,"Müdür olarak giriş yaptınız.","Hoşgeldiniz",JOptionPane.INFORMATION_MESSAGE);
+                        dispose();
                         Mudur_islem mudurIslem = new Mudur_islem();
                         mudurIslem.setVisible(true);
                     }
@@ -89,6 +88,6 @@ public class Login  extends JFrame {
                }
            }
         });
-
     }
+
 }

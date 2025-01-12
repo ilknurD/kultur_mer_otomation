@@ -12,43 +12,9 @@ public class KullaniciIslem {
     }
 
 
-
-//    public kisi kullaniciKontrol(String mail, String pass) {
-//        kisi Kisi = null;
-//
-//        String kasiyerQuery = "SELECT * FROM kasiyerler WHERE kasiyer_eposta = ? AND kasiyer_sifre = ?";
-//        String mudurQuery = "SELECT * FROM mudurler WHERE mudur_eposta = ? AND mudur_sifre = ?";
-//
-//        try {
-//            PreparedStatement psKasiyer = this.conn.prepareStatement(kasiyerQuery);
-//            psKasiyer.setString(1, mail);
-//            psKasiyer.setString(2, pass);
-//            ResultSet rsKasiyer = psKasiyer.executeQuery();
-//
-//            if (rsKasiyer.next()) {
-//                Kisi = this.karsilastirKasiyer(rsKasiyer);
-//            } else {
-//                PreparedStatement psMudur = this.conn.prepareStatement(mudurQuery);
-//                psMudur.setString(1, mail);
-//                psMudur.setString(2, pass);
-//                ResultSet rsMudur = psMudur.executeQuery();
-//
-//                if (rsMudur.next()) {
-//                    Kisi = this.karsilastirMudur(rsMudur);
-//                }
-//            }
-//
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        return Kisi;
-//    }
-
     public kisi kullaniciKontrol(String mail, String pass) {
         kisi Kisi = null;
 
-        // Kasiyer tablosunu sorgula
         String kasiyerQuery = "SELECT * FROM kasiyerler WHERE kasiyer_eposta = ? AND kasiyer_sifre = ?";
         try {
             PreparedStatement ps = this.conn.prepareStatement(kasiyerQuery);
@@ -56,7 +22,6 @@ public class KullaniciIslem {
             ps.setString(2, pass);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                System.out.println("Kasiyer bulundu.");
                 Kasiyer kasiyer = new Kasiyer();  // Nesneyi burada oluştur
                 Kisi = kasiyer;
                 Kisi.setId(rs.getInt("kasiyer_id"));
@@ -69,7 +34,6 @@ public class KullaniciIslem {
             throw new RuntimeException(e);
         }
 
-        // Eğer Kasiyer bulunamazsa, Mudur tablosunu sorgula
         if (Kisi == null) {
             String mudurQuery = "SELECT * FROM mudurler WHERE mudur_eposta = ? AND mudur_sifre = ?";
             try {
@@ -78,8 +42,7 @@ public class KullaniciIslem {
                 ps.setString(2, pass);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
-                    System.out.println("Müdür bulundu.");
-                    Mudur mudur = new Mudur();  // Nesneyi burada oluştur
+                    Mudur mudur = new Mudur();
                     Kisi = mudur;
                     Kisi.setId(rs.getInt("mudur_id"));
                     Kisi.setMail(rs.getString("mudur_eposta"));

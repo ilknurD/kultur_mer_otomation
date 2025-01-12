@@ -29,6 +29,9 @@ public class Bilet_guncelle extends JFrame{
         this.setLocation(x, y);
         this.setVisible(true);
     }
+
+    public Bilet_guncelle(Bilet seciliBilet) {
+    }
 }
 
 

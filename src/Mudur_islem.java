@@ -93,7 +93,7 @@ public class Mudur_islem extends JFrame {
         return query(query);
     }
 
-    public ArrayList<Bilet> filtreleBilet(String musteriAdi,int kasaNo, etkinlik.TYPE etkinlikTuru) {
+    public ArrayList<Bilet> filtreleBilet(String musteriAdi, int kasaNo, etkinlik.TYPE etkinlikTuru) {
         ArrayList<Bilet> biletListesi = new ArrayList<>();
         StringBuilder query = new StringBuilder("SELECT * FROM biletler b " +
                 "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +
@@ -101,10 +101,9 @@ public class Mudur_islem extends JFrame {
                 "LEFT JOIN salonlar s ON b.salon_id = s.salon_id " +
                 "LEFT JOIN kasiyerler k ON b.kasaNo = k.kasiyer_kasaNo");
 
-
         ArrayList<String> kosullar = new ArrayList<>();
 
-        if (musteriAdi != null && musteriAdi.isEmpty()) {
+        if (musteriAdi != null && !musteriAdi.isEmpty()) {
             kosullar.add("m.ad LIKE '%" + musteriAdi + "%'");
         }
         if (kasaNo > 0) {
@@ -114,25 +113,24 @@ public class Mudur_islem extends JFrame {
             kosullar.add("e.etkinlik_turu = '" + etkinlikTuru + "'");
         }
 
-        if (kosullar.isEmpty()) {
+        if (!kosullar.isEmpty()) {
             query.append(" WHERE ").append(String.join(" AND ", kosullar));
         }
 
         try {
-            Statement stmt= conn.createStatement();
+            Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(query.toString());
 
-            while (rs.next()){
+            while (rs.next()) {
                 biletListesi.add(bilet.biletCekVeritabani(rs));
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             Helper.Mesaj("Biletleri listelerken bir hata oluştu.");
         }
 
         return biletListesi;
     }
-
 
 
     kisi Kisi = new kisi();
@@ -175,6 +173,8 @@ public class Mudur_islem extends JFrame {
         tbl_biletler.setFont(new Font("Serif", Font.PLAIN, 16));
         btn_f_biletler_ara.setFont(new Font("Serif", Font.BOLD, 16));
         btn_f_biletler_temizle.setFont(new Font("Serif", Font.BOLD, 16));
+        lbl_f_biletler_kasaNo.setFont(new Font("Serif", Font.BOLD, 16));
+        fld_f_biletler_kasaNo.setFont(new Font("Serif", Font.BOLD, 16));
         JTableHeader BiletBaslik = tbl_biletler.getTableHeader();
         BiletBaslik.setFont(yeniFont1);
         UIManager.put("TableHeader.font", yeniFont1); //Tablo başlıklarına font için
@@ -234,6 +234,7 @@ public class Mudur_islem extends JFrame {
         YukleEtkinliklerButtonIslem();
 
         YukleBiletlerButtonIslem();
+        YukleBiletlerPopup();
 
         cmb_f_calisanTuru.addActionListener(new ActionListener() {
             @Override
@@ -319,7 +320,7 @@ public class Mudur_islem extends JFrame {
                     int onay = JOptionPane.showConfirmDialog(null, "Bu etkinliği silmek istediğinize emin misiniz?", "Onay", JOptionPane.YES_NO_OPTION);
                     if (onay == JOptionPane.YES_OPTION) {
                         Etkinlik_Ekle etkinlik_ekle = new Etkinlik_Ekle();
-                        boolean silmeBasarili = etkinlik_ekle.sil(seciliId);
+                        boolean silmeBasarili = etkinlik_ekle.silEtkinlik(seciliId);
                         if (silmeBasarili) {
                             ArrayList<etkinlik> etkinlikler = Etkinlik.etkinlikListele();
                             mdl_etkinlikler_t.setRowCount(0);
@@ -352,8 +353,6 @@ public class Mudur_islem extends JFrame {
         }
 
         this.tbl_etkinlikler.setModel(this.mdl_etkinlikler_t);
-
-        //Özellikleri almadı, en son bak
         this.tbl_etkinlikler.getTableHeader().setReorderingAllowed(false);
         this.tbl_etkinlikler.getColumnModel().getColumn(0).setPreferredWidth(50);
         this.tbl_etkinlikler.setEnabled(false);
@@ -362,7 +361,7 @@ public class Mudur_islem extends JFrame {
     public ArrayList<Bilet> biletleriListele() {
         ArrayList<Bilet> biletler1 = bilet.biletListele(); // Veritabanından cektim
         DefaultTableModel model = (DefaultTableModel) tbl_biletler.getModel();
-        model.setRowCount(0);  // temizle
+        model.setRowCount(0);
 
         for (Bilet bilet : biletler1) {
             Object[] row = new Object[]{
@@ -448,10 +447,66 @@ public class Mudur_islem extends JFrame {
         this.btn_f_biletler_temizle.addActionListener(e -> {
             this.fld_f_biletler_musteriAdi.setText(null);
             this.fld_f_biletler_kasaNo.setText(null);
-            this.cmb_f_etkinlikler_turu.setSelectedItem(null);
+            this.cmb_f_BltEtkinlik_turu.setSelectedItem(null);
             YukleBiletlerTable(bilet.biletListele());
         });
 
+    }
+
+    private void YukleBiletlerPopup() {
+        this.tbl_biletler.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int secilisatir = tbl_biletler.rowAtPoint(e.getPoint());
+                tbl_biletler.setRowSelectionInterval(secilisatir, secilisatir);
+            }
+        });
+
+        this.popup_biletler.add("Güncelle").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int seciliId = Integer.parseInt(tbl_biletler.getValueAt(tbl_biletler.getSelectedRow(), 0).toString());
+                Bilet seciliBilet = Mudur_islem.this.bilet.getBiletById(seciliId);
+                Bilet_guncelle bilet_guncelle = new Bilet_guncelle(seciliBilet);
+                bilet_guncelle.setVisible(true);
+                bilet_guncelle.addWindowListener(new WindowAdapter() {
+                    public void windowClosed(WindowEvent e) {
+                        ArrayList<Bilet> biletler = bilet.biletListele();
+                        mdl_biletler_t.setRowCount(0);
+                        YukleBiletlerTable(biletler);
+                    }
+                });
+            }
+        });
+
+        this.popup_biletler.add("Sil").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int seciliId = Integer.parseInt(tbl_biletler.getValueAt(tbl_biletler.getSelectedRow(), 0).toString());
+                if (seciliId != 0) {
+                    int onay = JOptionPane.showConfirmDialog(null,
+                            "Bu bileti silmek istediğinize emin misiniz?",
+                            "Onay",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (onay == JOptionPane.YES_OPTION) {
+                        Bilet biletSilme = new Bilet();
+                        boolean silmeBasarili = biletSilme.silBilet(seciliId);
+                        if (silmeBasarili) {
+                            ArrayList<Bilet> biletler = bilet.biletListele();
+                            mdl_biletler_t.setRowCount(0);
+                            YukleBiletlerTable(biletler);
+                            Helper.Mesaj("Bilet başarıyla silindi");
+                        } else {
+                            Helper.Mesaj("Silme işlemi sırasında bir hata oluştu.");
+
+                        }
+                    }
+                }
+            }
+        });
+
+        this.tbl_biletler.setComponentPopupMenu(this.popup_biletler);
     }
 
 
