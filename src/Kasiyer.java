@@ -1,16 +1,24 @@
 public class Kasiyer extends Calisan{
-    private String kasaNo;
+    private int kasaNo;
 
-    public Kasiyer(String ad, int id, String mail, String soyad, Type type, int maas, String sifre, String kasaNo) {
+    public Kasiyer(int kasaNo) {
+        this.kasaNo = kasaNo;
+    }
+
+    public Kasiyer(String ad, int id, String mail, String soyad, Type type, int maas, String sifre, int kasaNo) {
         super(ad, id, mail, soyad, type, maas, sifre);
         this.kasaNo = kasaNo;
     }
 
-    public String getKasaNo() {
+    public Kasiyer() {
+
+    }
+
+    public int getKasaNo() {
         return kasaNo;
     }
 
-    public void setKasaNo(String kasaNo) {
+    public void setKasaNo(int kasaNo) {
         this.kasaNo = kasaNo;
     }
 }

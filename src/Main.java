@@ -20,11 +20,11 @@ public class Main {
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-//                Login login = new Login();
-//                login.setVisible(true);
+                Login login = new Login();
+                login.setVisible(true);
 
-                  Mudur_islem mudur = new Mudur_islem();
-                  mudur.setVisible(true);
+//                  Mudur_islem mudur = new Mudur_islem();
+//                  mudur.setVisible(true);
             };
 
         });

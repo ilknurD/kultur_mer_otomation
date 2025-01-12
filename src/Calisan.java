@@ -1,6 +1,7 @@
 public class Calisan extends kisi{
     private int maas;
     private String sifre;
+    private String eposta;
 
     public Calisan() {
         super();

@@ -58,13 +58,21 @@ public class Login  extends JFrame {
                 kisi Kisi = kullaniciIslem.kullaniciKontrol(mail, pass);
 
                 if (Kisi != null && Kisi.getMail() != null) {
-                    Helper.Mesaj("basarili");
-                    dispose();
-                    Bilet_Satin_Alma blt = new Bilet_Satin_Alma();
-                    blt.setVisible(true);
-                }
+                    Helper.Mesaj("Başarılı");
 
-                else{
+                    // Kullanıcı türüne göre yönlendirme
+                    if (Kisi instanceof Kasiyer) {
+                        Helper.Mesaj("Kasiyer olarak giriş yaptınız.");
+                        dispose(); // Mevcut pencereyi kapat
+                        Bilet_Satin_Alma blt = new Bilet_Satin_Alma(); // Kasiyerler için bilet satın alma sayfası
+                        blt.setVisible(true);
+                    } else if (Kisi instanceof Mudur) {
+                        Helper.Mesaj("Müdür olarak giriş yaptınız.");
+                        dispose(); // Mevcut pencereyi kapat
+                        Mudur_islem mudurIslem = new Mudur_islem();
+                        mudurIslem.setVisible(true);
+                    }
+                } else {
                     Helper.Mesaj("Kullanıcı bilgisi bulunamadı.");
                 }
             }

@@ -10,25 +10,30 @@ public class Bilet {
     private int musteriId;
     private String musteriAdi;
     private String musteriSoyad;
-    private int musteriTelefon;
+    private String musteriTelefon;
     private int koltukId;
     private String koltukNo;
     private int salonId;
     private String salonAdi;
     private int fiyat;
     private Timestamp tarih;
+    private int kasaNo;
     private Connection conn = VeriTabaniBaglantisi.getConnection();
     private musteri Musteri;
     private etkinlik Etkinlik;
 
-    public Bilet(int biletId, String etkinlikAdi, int etkinlikId, String etkinlikTuru, int fiyat, int koltukId, String koltukNo, String musteriAdi, int musteriId, String musteriSoyad, int musteriTelefon, String salonAdi, int salonId, Timestamp tarih) {
+    public Bilet(int biletId, Connection conn, etkinlik etkinlik, String etkinlikAdi, int etkinlikId, String etkinlikTuru, int fiyat, int kasaNo, int koltukId, String koltukNo, musteri musteri, String musteriAdi, int musteriId, String musteriSoyad, String musteriTelefon, String salonAdi, int salonId, Timestamp tarih) {
         this.biletId = biletId;
+        this.conn = conn;
+        Etkinlik = etkinlik;
         this.etkinlikAdi = etkinlikAdi;
         this.etkinlikId = etkinlikId;
         this.etkinlikTuru = etkinlikTuru;
         this.fiyat = fiyat;
+        this.kasaNo = kasaNo;
         this.koltukId = koltukId;
         this.koltukNo = koltukNo;
+        Musteri = musteri;
         this.musteriAdi = musteriAdi;
         this.musteriId = musteriId;
         this.musteriSoyad = musteriSoyad;
@@ -36,6 +41,22 @@ public class Bilet {
         this.salonAdi = salonAdi;
         this.salonId = salonId;
         this.tarih = tarih;
+    }
+
+    public Connection getConn() {
+        return conn;
+    }
+
+    public void setConn(Connection conn) {
+        this.conn = conn;
+    }
+
+    public int getKasaNo() {
+        return kasaNo;
+    }
+
+    public void setKasaNo(int kasaNo) {
+        this.kasaNo = kasaNo;
     }
 
     public Bilet() {
@@ -58,11 +79,11 @@ public class Bilet {
         this.Musteri = musteri;
     }
 
-    public int getMusteriTelefon() {
+    public String getMusteriTelefon() {
         return musteriTelefon;
     }
 
-    public void setMusteriTelefon(int musteriTelefon) {
+    public void setMusteriTelefon(String musteriTelefon) {
         this.musteriTelefon = musteriTelefon;
     }
 
@@ -170,51 +191,50 @@ public class Bilet {
         this.tarih = tarih;
     }
 
-    @Override
-    public String toString() { //Daha okunabilir olsun diye
-        return "Bilet [biletId=" + biletId + ", etkinlikId=" + etkinlikId + ", etkinlikTuru=" + etkinlikTuru
-                + ", etkinlikAdi=" + etkinlikAdi + ", musteriId=" + musteriId + ", musteriAdi=" + musteriAdi
-                + ", musteriSoyad=" + musteriSoyad + ", koltukId=" + koltukId + ", koltukNo=" + koltukNo
-                + ", tarih=" + tarih + "]";
-    }
-
 
     public ArrayList<Bilet> biletListele() {
-        String query = "SELECT b.bilet_id, m.ad, m.soyad, e.etkinlik_adi, e.etkinlik_turu, s.salon_adi " +
+        String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_adi, e.etkinlik_turu, " +
+                "s.salon_adi, b.koltuk_id, e.etkinlik_fiyati, b.tarih, k.kasiyer_kasaNo " +
                 "FROM biletler b " +
-                "JOIN musteriler m ON b.musteri_id = m.musteri_id " +
-                "JOIN etkinlikler e ON b.   etkinlik_id = e.etkinlik_id " +
-                "JOIN salonlar s ON b.salon_id = s.salon_id";
+                "INNER JOIN musteriler m ON b.musteri_id = m.musteri_id " +
+                "INNER JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
+                "INNER JOIN salonlar s ON b.salon_id = s.salon_id " +
+                "INNER JOIN kasiyerler k ON b.kasaNo = k.kasiyer_kasaNo";
+
 
 
         ArrayList<Bilet> biletListe = new ArrayList<>();
-        try{
-            ResultSet RS = this.conn.createStatement().executeQuery(query);
-            while (RS.next()){
+        try {
+            Statement stmt = this.conn.createStatement();
+            ResultSet RS = stmt.executeQuery(query);
+            while (RS.next()) {
                 biletListe.add(this.biletCekVeritabani(RS));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+
+
         return biletListe;
     }
 
     public Bilet biletCekVeritabani(ResultSet RS) throws SQLException {
         Bilet karsilastirBilet = new Bilet();
-        etkinlik karsilastirEtkinlik = new etkinlik();
-        musteri karsilastirMusteri = new musteri();
-        karsilastirBilet.setBiletId(RS.getInt("bilet_id"));
-        karsilastirEtkinlik.setEtkinlik_turu(etkinlik.TYPE.valueOf(RS.getString("etkinlik_turu")));
-        karsilastirMusteri.setMusteriAd(RS.getString("musteri_ad"));
-        karsilastirMusteri.setMusteriSoyad(RS.getString("soyad"));
-        karsilastirBilet.setTarih(Timestamp.valueOf(RS.getString("tarih")));
-        karsilastirBilet.setSalonAdi(RS.getString("salon_adi"));
-        karsilastirBilet.setFiyat(RS.getInt("fiyat"));
 
-        karsilastirBilet.setEtkinlik(karsilastirEtkinlik);
-        karsilastirBilet.setMusteri(karsilastirMusteri);
+        karsilastirBilet.setBiletId(RS.getInt("bilet_id"));
+        karsilastirBilet.setEtkinlikTuru(RS.getString("etkinlik_turu"));
+        karsilastirBilet.setEtkinlikAdi(RS.getString("etkinlik_adi"));
+        karsilastirBilet.setMusteriAdi(RS.getString("ad"));
+        karsilastirBilet.setMusteriSoyad(RS.getString("soyad"));
+        karsilastirBilet.setMusteriTelefon(RS.getString("telefon"));
+        karsilastirBilet.setTarih(RS.getTimestamp("tarih")); // String'e çevirmeye gerek yok
+        karsilastirBilet.setSalonAdi(RS.getString("salon_adi"));
+        karsilastirBilet.setKoltukNo(RS.getString("koltuk_id"));
+        karsilastirBilet.setFiyat(RS.getInt("etkinlik_fiyati"));
+        karsilastirBilet.setKasaNo(RS.getInt("kasiyer_kasaNo"));
 
         return karsilastirBilet;
     }
+
 }

@@ -6,6 +6,10 @@ public class Mudur extends Calisan{
         this.departman = departman;
     }
 
+    public Mudur() {
+
+    }
+
     public String getDepartman() {
         return departman;
     }
