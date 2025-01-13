@@ -300,7 +300,7 @@ public class Mudur_islem extends JFrame {
                     public void windowClosed(WindowEvent e) {
                         Etkinlik_Ekle guncellemeIslemi = new Etkinlik_Ekle();
                         if (seciliEtkinlik != null) {
-                            boolean guncellemeBasarili = guncellemeIslemi.guncelle(seciliEtkinlik);
+                            boolean guncellemeBasarili = guncellemeIslemi.guncelleEtkinlik(seciliEtkinlik);
                             if (guncellemeBasarili) {
                                 ArrayList<etkinlik> etkinlikler = Etkinlik.etkinlikListele();
                                 mdl_etkinlikler_t.setRowCount(0);
@@ -465,17 +465,39 @@ public class Mudur_islem extends JFrame {
         this.popup_biletler.add("Güncelle").addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int seciliId = Integer.parseInt(tbl_biletler.getValueAt(tbl_biletler.getSelectedRow(), 0).toString());
-                Bilet seciliBilet = Mudur_islem.this.bilet.getBiletById(seciliId);
-                Bilet_guncelle bilet_guncelle = new Bilet_guncelle(seciliBilet);
-                bilet_guncelle.setVisible(true);
-                bilet_guncelle.addWindowListener(new WindowAdapter() {
-                    public void windowClosed(WindowEvent e) {
-                        ArrayList<Bilet> biletler = bilet.biletListele();
-                        mdl_biletler_t.setRowCount(0);
-                        YukleBiletlerTable(biletler);
+                try {
+                    // Tablo üzerinden seçili satır kontrolü
+                    if (tbl_biletler.getSelectedRow() == -1) {
+                        JOptionPane.showMessageDialog(null, "Lütfen bir bilet seçiniz!");
+                        return;
                     }
-                });
+
+                    // Seçili bileti veritabanından al
+                    int seciliId = Integer.parseInt(tbl_biletler.getValueAt(tbl_biletler.getSelectedRow(), 0).toString());
+                    Bilet seciliBilet = bilet.getBiletById(seciliId); // Veritabanından bileti getiren bir metot olmalı
+
+                    if (seciliBilet != null) {
+                        // Bilet güncelleme penceresini aç
+                        Bilet_guncelle bilet_guncelle = new Bilet_guncelle(seciliBilet);
+                        bilet_guncelle.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Pencereyi düzgün kapatmak için
+                        bilet_guncelle.setVisible(true);
+
+                        // Pencere kapandığında sadece tabloyu güncelle
+                        bilet_guncelle.addWindowListener(new WindowAdapter() {
+                            @Override
+                            public void windowClosed(WindowEvent e) {
+                                ArrayList<Bilet> biletler = bilet.biletListele();
+                                mdl_biletler_t.setRowCount(0);
+                                YukleBiletlerTable(biletler);
+                            }
+                        });
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Seçili bilet veritabanında bulunamadı!");
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace(); // Hata ayıklama için
+                    JOptionPane.showMessageDialog(null, "Bir hata oluştu: " + ex.getMessage());
+                }
             }
         });
 
@@ -509,66 +531,6 @@ public class Mudur_islem extends JFrame {
         this.tbl_biletler.setComponentPopupMenu(this.popup_biletler);
     }
 
-
-//    //Güncelleme yapılacak sayfa yapıldıktan sonra yapılacak
-//    private void YukleBiletlerPopup() {
-//
-//        this.tbl_biletler.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                int secilisatir = tbl_biletler.rowAtPoint(e.getPoint()); //tıkladığında seçili olanı renkledim
-//                tbl_biletler.setRowSelectionInterval(secilisatir, secilisatir);
-//            }
-//        });
-//
-//        this.popup_biletler.add("Güncelle").addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int seciliId = Integer.parseInt(tbl_biletler.getValueAt(tbl_biletler.getSelectedRow(), 0).toString());
-//                Bilet seciliBilet = Mudur_islem.this.bilet.getBiletId(seciliId);
-//                Etkinlik_Ekle etkinlik_ekle = new Etkinlik_Ekle(seciliBilet);
-//                etkinlik_ekle.setVisible(true);
-//                etkinlik_ekle.addWindowListener(new WindowAdapter() {
-//                    public void windowClosed(WindowEvent e) {
-//                        Etkinlik_Ekle guncellemeIslemi = new Etkinlik_Ekle();
-//                        if (seciliEtkinlik != null) {
-//                            boolean guncellemeBasarili = guncellemeIslemi.guncelle(seciliEtkinlik);
-//                            if (guncellemeBasarili) {
-//                                ArrayList<etkinlik> etkinlikler = Etkinlik.etkinlikListele();
-//                                mdl_etkinlikler_t.setRowCount(0);
-//                                YukleEtkinliklerTable(etkinlikler);
-//                            }
-//                        }
-//                    }
-//                });
-//            }
-//        });
-
-//        this.popup_etkinlikler.add("Sil").addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int seciliId = Integer.parseInt(tbl_etkinlikler.getValueAt(tbl_etkinlikler.getSelectedRow(), 0).toString());
-//                if (seciliId != 0) {
-//                    int onay = JOptionPane.showConfirmDialog(null, "Bu etkinliği silmek istediğinize emin misiniz?", "Onay", JOptionPane.YES_NO_OPTION);
-//                    if (onay == JOptionPane.YES_OPTION) {
-//                        Etkinlik_Ekle etkinlik_ekle = new Etkinlik_Ekle();
-//                        boolean silmeBasarili = etkinlik_ekle.sil(seciliId);
-//                        if (silmeBasarili) {
-//                            ArrayList<etkinlik> etkinlikler = Etkinlik.etkinlikListele();
-//                            mdl_etkinlikler_t.setRowCount(0);
-//                            YukleEtkinliklerTable(etkinlikler);
-//                            Helper.Mesaj("Etkinlik başarıyla silindi");
-//                        } else {
-//                            Helper.Mesaj("Silme işlemi sırasında bir hata oluştu.");
-//                        }
-//                    }
-//                }
-//            }
-//        });
-//
-//        this.tbl_etkinlikler.setComponentPopupMenu(this.popup_etkinlikler);
-//    }
 
     public void YukleCalisanlarTable(String[] columnHeaders, ArrayList<Object[]> data){
         String selected = (String) cmb_f_calisanTuru.getSelectedItem();;

@@ -25,13 +25,10 @@ public class Login  extends JFrame {
         Giris_lbl.setFont(new Font("Serif", Font.BOLD, 20));
         eposta_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         sifre_lbl.setFont(new Font("Serif", Font.BOLD, 18));
-
         button1.setFont(new Font("Serif", Font.BOLD, 18));
-
         fld_eposta.setFont(new Font("Serif", Font.BOLD, 18));
         fld_pass.setFont(new Font("Serif", Font.BOLD, 18));
         sifrechck.setFont(new Font("Serif", Font.BOLD, 10));
-
 
         ImageIcon imageIcon = new ImageIcon("C:\\Users\\90539\\Downloads\\397057724_11539820.png");
         Image image = imageIcon.getImage();
@@ -39,8 +36,6 @@ public class Login  extends JFrame {
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         JLabel imgLbl = img_lbl;
         imgLbl.setIcon(scaledIcon);
-
-
 
         button1.addActionListener(new ActionListener() {
             @Override

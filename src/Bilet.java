@@ -12,17 +12,17 @@ public class Bilet {
     private String musteriSoyad;
     private String musteriTelefon;
     private int koltukId;
-    private String koltukNo;
+    private int koltukNo;
     private int salonId;
     private String salonAdi;
     private int fiyat;
     private Timestamp tarih;
     private int kasaNo;
-    private Connection conn = VeriTabaniBaglantisi.getConnection();
+    private Connection conn;
     private musteri Musteri;
     private etkinlik Etkinlik;
 
-    public Bilet(int biletId, Connection conn, etkinlik etkinlik, String etkinlikAdi, int etkinlikId, String etkinlikTuru, int fiyat, int kasaNo, int koltukId, String koltukNo, musteri musteri, String musteriAdi, int musteriId, String musteriSoyad, String musteriTelefon, String salonAdi, int salonId, Timestamp tarih) {
+    public Bilet(int biletId, Connection conn, etkinlik etkinlik, String etkinlikAdi, int etkinlikId, String etkinlikTuru, int fiyat, int kasaNo, int koltukId, int koltukNo, musteri musteri, String musteriAdi, int musteriId, String musteriSoyad, String musteriTelefon, String salonAdi, int salonId, Timestamp tarih) {
         this.biletId = biletId;
         this.conn = conn;
         Etkinlik = etkinlik;
@@ -175,11 +175,11 @@ public class Bilet {
         this.koltukId = koltukId;
     }
 
-    public String getKoltukNo() {
+    public int getKoltukNo() {
         return koltukNo;
     }
 
-    public void setKoltukNo(String koltukNo) {
+    public void setKoltukNo(int koltukNo) {
         this.koltukNo = koltukNo;
     }
 
@@ -191,7 +191,6 @@ public class Bilet {
         this.tarih = tarih;
     }
 
-
     public ArrayList<Bilet> biletListele() {
         String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_adi, e.etkinlik_turu, " +
                 "s.salon_adi, b.koltuk_id, e.etkinlik_fiyati, b.tarih, k.kasiyer_kasaNo " +
@@ -200,7 +199,6 @@ public class Bilet {
                 "INNER JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
                 "INNER JOIN salonlar s ON b.salon_id = s.salon_id " +
                 "INNER JOIN kasiyerler k ON b.kasaNo = k.kasiyer_kasaNo";
-
 
 
         ArrayList<Bilet> biletListe = new ArrayList<>();
@@ -230,7 +228,7 @@ public class Bilet {
         karsilastirBilet.setMusteriTelefon(RS.getString("telefon"));
         karsilastirBilet.setTarih(RS.getTimestamp("tarih")); // String'e çevirmeye gerek yok
         karsilastirBilet.setSalonAdi(RS.getString("salon_adi"));
-        karsilastirBilet.setKoltukNo(RS.getString("koltuk_id"));
+        karsilastirBilet.setKoltukNo(RS.getInt("koltuk_id"));
         karsilastirBilet.setFiyat(RS.getInt("etkinlik_fiyati"));
         karsilastirBilet.setKasaNo(RS.getInt("kasiyer_kasaNo"));
 
@@ -239,13 +237,14 @@ public class Bilet {
 
     public Bilet getBiletById(int id) {
         Bilet bilet = null;
-        String query = "SELECT b.*, m.ad as musteri_adi, m.soyad as musteri_soyad, " +
-                "m.telefon as musteri_telefon, e.etkinlik_turu, e.etkinlik_ad, " +
-                "s.salon_adi, e.etkinlik_fiyat " +
+        String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_turu, e.etkinlik_adi, " +
+                "s.salon_adi, e.etkinlik_fiyati, b.koltuk_id, o.koltuk_no, b.salon_id, b.tarih, k.kasiyer_kasaNo " +
                 "FROM biletler b " +
                 "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +
                 "LEFT JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
                 "LEFT JOIN salonlar s ON b.salon_id = s.salon_id " +
+                "LEFT JOIN kasiyerler k ON b.kasaNo = k.kasiyer_kasaNo " +
+                "LEFT JOIN koltuklar o ON b.koltuk_id = o.koltuk_id " +
                 "WHERE b.bilet_id = ?";
 
         try {

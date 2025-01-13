@@ -26,7 +26,7 @@ public class Etkinlik_Ekle extends JFrame {
 
     }
 
-    public boolean guncelle(etkinlik Etkinlik){
+    public boolean guncelleEtkinlik(etkinlik Etkinlik){
         String query = "UPDATE etkinlikler SET " +
                 "etkinlik_adi =? ," +
                 "etkinlik_turu =? ," +
@@ -43,10 +43,7 @@ public class Etkinlik_Ekle extends JFrame {
                 Helper.Mesaj("Geçerli bir tarih formatı giriniz");
                 return false;
             }
-
             String formattedDate = Helper.convertDateFormat(tarih); //Dönüştürdüm uygun formata
-
-
             pr.setString(1,Etkinlik.getEtkinlik_ad());
             pr.setString(2,Etkinlik.getEtkinlik_turu().toString());
             pr.setString(3,formattedDate);
@@ -165,12 +162,10 @@ public class Etkinlik_Ekle extends JFrame {
                     this.Etkinlik.setEtkinlik_turu(etkinlik.TYPE.valueOf(this.cmb_tur.getSelectedItem().toString()));
                     this.Etkinlik.setEtkinlikFiyat(Integer.parseInt(this.fld_fiyat.getText()));
 
-//                    Mudur_islem mudurIslem = new Mudur_islem();
-
                     if(this.Etkinlik.getEtkinlikid() == 0){
                         result = this.etknlkkaydet(this.Etkinlik);
                     }else{
-                        result = this.guncelle(this.Etkinlik);
+                        result = this.guncelleEtkinlik(this.Etkinlik);
                     }
 
                     if (result){

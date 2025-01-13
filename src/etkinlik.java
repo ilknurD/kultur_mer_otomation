@@ -115,7 +115,6 @@ public class etkinlik {
         return nsetkinlik;
     }
 
-    //(Bunlar etkinlik sınıfına taşınacak)
     public etkinlik etkinlikCekVeritabani(ResultSet rs) throws SQLException {
         etkinlik Etkinlik = new etkinlik();
         Etkinlik.setEtkinlikid(rs.getInt("etkinlik_id"));
