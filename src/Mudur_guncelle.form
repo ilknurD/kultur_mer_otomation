@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Mudur_guncelle">
+  <grid id="27dc6" binding="mudur_guncelle_panel" layout-manager="GridLayoutManager" row-count="12" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="50" left="20" bottom="50" right="20"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="483"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="73cbb" class="javax.swing.JLabel" binding="lbl_baslik">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Müdür Bilgilerini Güncelle"/>
+        </properties>
+      </component>
+      <component id="8c2b8" class="javax.swing.JLabel" binding="lbl_mudur_ad">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Ad:"/>
+        </properties>
+      </component>
+      <component id="c6ebd" class="javax.swing.JTextField" binding="fld_mudur_ad">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="350a5" class="javax.swing.JLabel" binding="lbl_mudur_soyad">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Soyad:"/>
+        </properties>
+      </component>
+      <component id="63b0c" class="javax.swing.JTextField" binding="fld_mudur_soyad">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="9861b" class="javax.swing.JLabel" binding="lbl_mudur_eposta">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="E-posta:"/>
+        </properties>
+      </component>
+      <component id="bcf90" class="javax.swing.JTextField" binding="fld_mudur_eposta">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c49ee" class="javax.swing.JLabel" binding="lbl_mudur_departman">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Departman:"/>
+        </properties>
+      </component>
+      <component id="94d8b" class="javax.swing.JLabel" binding="lbl_mudur_maas">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Maaş:"/>
+        </properties>
+      </component>
+      <component id="1bf20" class="javax.swing.JTextField" binding="fld_mudur_maas">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="bb552" class="javax.swing.JComboBox" binding="cmb_mudur_departman">
+        <constraints>
+          <grid row="8" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="94e1f" class="javax.swing.JButton" binding="btn_guncelle">
+        <constraints>
+          <grid row="11" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Güncelle"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

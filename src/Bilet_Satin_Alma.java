@@ -50,9 +50,9 @@ public class Bilet_Satin_Alma extends JFrame {
        add(biletAlPNL);
        setTitle("Bilet Satın Alma Sayfası");
        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+       setSize(1600,900);
        setExtendedState(JFrame.MAXIMIZED_BOTH);
        setLocationRelativeTo(null);
-
 
        ButtonGroup salon = new ButtonGroup();
         salon.add(salon1RadioButton);

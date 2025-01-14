@@ -131,7 +131,6 @@ public class Bilet_guncelle extends JFrame {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                // Bilet nesnesini güncelle
                 mevcutBilet.setEtkinlikId(rs.getInt("etkinlik_id"));
                 mevcutBilet.setMusteriId(rs.getInt("musteri_id"));
                 mevcutBilet.setKoltukNo(rs.getInt("koltuk_id"));

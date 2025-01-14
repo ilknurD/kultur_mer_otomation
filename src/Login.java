@@ -61,6 +61,8 @@ public class Login  extends JFrame {
                         Bilet_Satin_Alma blt = new Bilet_Satin_Alma();
                         blt.setVisible(true);
                     } else if (Kisi instanceof Mudur) {
+                        UserSession session = UserSession.getInstance();
+                        session.setUserId(Kisi.getId());
                         JOptionPane.showMessageDialog(null,"Müdür olarak giriş yaptınız.","Hoşgeldiniz",JOptionPane.INFORMATION_MESSAGE);
                         dispose();
                         Mudur_islem mudurIslem = new Mudur_islem();

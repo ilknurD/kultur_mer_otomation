@@ -7,12 +7,6 @@ public class Calisan extends kisi{
         super();
     }
 
-    public void etkinlikEkle(){};
-    public void etkinlikGuncelle(){};
-    public void etkinlikSil(){};
-    public void etkinlikListele(){};
-    public void musteriBilgileriniGoruntule(){};
-
     public Calisan(String ad, int id, String mail, String soyad, Type type, int maas, String sifre) {
         super(ad, id, mail, soyad, type);
         this.maas = maas;
@@ -34,4 +28,5 @@ public class Calisan extends kisi{
     public void setSifre(String sifre) {
         this.sifre = sifre;
     }
+
 }

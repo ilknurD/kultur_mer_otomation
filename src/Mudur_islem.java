@@ -54,9 +54,11 @@ public class Mudur_islem extends JFrame {
     private DefaultTableModel mdl_calisanlar_t = new DefaultTableModel();
     private JPopupMenu popup_etkinlikler = new JPopupMenu();
     private JPopupMenu popup_biletler = new JPopupMenu();
+    private JPopupMenu popup_calisanlar = new JPopupMenu();
     public Helper helper = new Helper();
     public etkinlik Etkinlik = new etkinlik();
     public Bilet bilet = new Bilet();
+    public Calisan calisan = new Calisan();
 
 
     public ArrayList<etkinlik> query(String query) { //sorguyu dışardan alıp ona göre listeleme yapabilelim diye
@@ -135,14 +137,17 @@ public class Mudur_islem extends JFrame {
 
     kisi Kisi = new kisi();
     Mudur mudur = new Mudur();
+    Kasiyer kasiyer = new Kasiyer();
+    UserSession session = UserSession.getInstance();
 
     public Mudur_islem() {
         add(mudur_islm_PNL);
+        setSize(1600, 900);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Pencereyi tam ekran yapar
         setTitle("Müdür İşlemleri");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        this.hosgeldin_lbl.setText("Hoşgeldin : " + this.mudur.getAd());
+        this.hosgeldin_lbl.setText("Hoşgeldin : " + session.getMudurAd());
         this.conn = VeriTabaniBaglantisi.getConnection();
         this.mdl_etkinlikler_t = new DefaultTableModel();
         this.mdl_biletler_t = new DefaultTableModel();
@@ -235,6 +240,9 @@ public class Mudur_islem extends JFrame {
 
         YukleBiletlerButtonIslem();
         YukleBiletlerPopup();
+
+//      YukleCalisanlarButtonIslem();
+        YukleCalisanlarPopup();
 
         cmb_f_calisanTuru.addActionListener(new ActionListener() {
             @Override
@@ -417,17 +425,17 @@ public class Mudur_islem extends JFrame {
         tbl_biletler.getColumnModel().getColumn(0).setPreferredWidth(50);
     }
 
-    private void YukleBiletlerButtonIslem(){
+    private void YukleBiletlerButtonIslem() {
         this.btn_f_biletler_ara.addActionListener(e -> {
-                    int kasaNo = 0;
-                    try {
-                        if (!this.fld_f_biletler_kasaNo.getText().trim().isEmpty()) {
-                            kasaNo = Integer.parseInt(this.fld_f_biletler_kasaNo.getText().trim());
-                        }
-                    } catch (NumberFormatException ex) {
-                        Helper.Mesaj("Lütfen kasa numarası için geçerli bir sayı giriniz!");
-                        return;
-                    }
+            int kasaNo = 0;
+            try {
+                if (!this.fld_f_biletler_kasaNo.getText().trim().isEmpty()) {
+                    kasaNo = Integer.parseInt(this.fld_f_biletler_kasaNo.getText().trim());
+                }
+            } catch (NumberFormatException ex) {
+                Helper.Mesaj("Lütfen kasa numarası için geçerli bir sayı giriniz!");
+                return;
+            }
 
             etkinlik.TYPE etkinlikTuru = null;
             if (this.cmb_f_BltEtkinlik_turu.getSelectedItem() != null) {
@@ -532,45 +540,149 @@ public class Mudur_islem extends JFrame {
     }
 
 
-    public void YukleCalisanlarTable(String[] columnHeaders, ArrayList<Object[]> data){
-        String selected = (String) cmb_f_calisanTuru.getSelectedItem();;
+    public void YukleCalisanlarTable(String[] columnHeaders, ArrayList<Object[]> data) {
+        String selected = (String) cmb_f_calisanTuru.getSelectedItem();
+        ;
         String query = "";
-       if ("Müdürler".equals(selected)){
-           columnHeaders = new String[]{"ID", "Ad", "Soyad", "E-posta", "Maaş", "Departman"};
-           query = "SELECT mudur_id,mudur_ad,mudur_soyad,mudur_eposta,mudur_maas,mudur_departman FROM mudurler";
-       }else if ("Kasiyerler".equals(selected)){
-           columnHeaders = new String[]{"ID", "Ad", "Soyad", "E-posta", "Maaş", "Kasa Numarası"};
-           query = "SELECT kasiyer_id,kasiyer_ad,kasiyer_soyad,kasiyer_eposta,kasiyer_maas,kasiyer_kasaNo FROM kasiyerler";
-       }else {
-           Helper.Mesaj("Geçerli bir çalışan türü seçin");
-           return;
-       }
+        if ("Müdürler".equals(selected)) {
+            columnHeaders = new String[]{"ID", "Ad", "Soyad", "E-posta", "Departman", "Maaş"};
+            query = "SELECT mudur_id,mudur_ad,mudur_soyad,mudur_eposta,mudur_departman,mudur_maas FROM mudurler";
+        } else if ("Kasiyerler".equals(selected)) {
+            columnHeaders = new String[]{"ID", "Ad", "Soyad", "E-posta", "Kasa Numarası", "Maaş"};
+            query = "SELECT kasiyer_id,kasiyer_ad,kasiyer_soyad,kasiyer_eposta,kasiyer_kasaNo,kasiyer_maas FROM kasiyerler";
+        } else {
+            Helper.Mesaj("Geçerli bir çalışan türü seçin");
+            return;
+        }
 
-       try (Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query)){
-           mdl_calisanlar_t.setRowCount(0);
-           mdl_calisanlar_t.setColumnCount(0);
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            mdl_calisanlar_t.setRowCount(0);
+            mdl_calisanlar_t.setColumnCount(0);
 
-           if (columnHeaders != null && columnHeaders.length > 0) {
-               for (String header : columnHeaders) {
-                   mdl_calisanlar_t.addColumn(header);
-               }
-           }
+            if (columnHeaders != null && columnHeaders.length > 0) {
+                for (String header : columnHeaders) {
+                    if (header == "Maaş" && "Müdürler".equals(selected)) {
+                        UserSession session = UserSession.getInstance();
+                        if (session.GenelMudurKontrol()) {
+                            mdl_calisanlar_t.addColumn(header);
+                        }
+                    } else {
+                        mdl_calisanlar_t.addColumn(header);
+                    }
+                }
+            }
 
-           while (rs.next()) {
-               Vector<Object> row = new Vector<>();
-               for (int i = 1; i <= columnHeaders.length; i++) {
-                   row.add(rs.getObject(i));
-               }
-               mdl_calisanlar_t.addRow(row);
-           }
+            while (rs.next()) {
+                Vector<Object> row = new Vector<>();
+                for (int i = 1; i <= columnHeaders.length; i++) {
+                    row.add(rs.getObject(i));
+                }
+                mdl_calisanlar_t.addRow(row);
+            }
 
-           tbl_calisanlar.setModel(mdl_calisanlar_t);
+            tbl_calisanlar.setModel(mdl_calisanlar_t);
 
-       } catch (SQLException e) {
-           e.printStackTrace();
-           JOptionPane.showMessageDialog(this, "Veri çekilirken bir hata oluştu!", "Hata", JOptionPane.ERROR_MESSAGE);
-       }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Veri çekilirken bir hata oluştu!", "Hata", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void YukleCalisanlarPopup() {
+        this.tbl_calisanlar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int secilisatir = tbl_calisanlar.rowAtPoint(e.getPoint());
+                tbl_calisanlar.setRowSelectionInterval(secilisatir, secilisatir);
+            }
+        });
+        this.popup_calisanlar.add("Güncelle").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tbl_calisanlar.getSelectedRow() == -1) {
+                    Helper.Mesaj("Lütfen bir çalışan seçiniz!");
+                    return;
+                }
+
+                try {
+                    int seciliId = Integer.parseInt(tbl_calisanlar.getValueAt(tbl_calisanlar.getSelectedRow(), 0).toString());
+                    String calisanTipi = (String) cmb_f_calisanTuru.getSelectedItem();
+
+                    if ("Müdürler".equals(calisanTipi)) {
+                        Mudur seciliMudur = mudur.getMudurById(seciliId);
+                        if (seciliMudur != null) {
+                            Mudur_guncelle mudur_guncelle = new Mudur_guncelle(seciliMudur);
+                            mudur_guncelle.setVisible(true);
+                            mudur_guncelle.addWindowListener(new WindowAdapter() {
+                                @Override
+                                public void windowClosed(WindowEvent e) {
+                                    YukleCalisanlarTable(null, null);
+                                }
+                            });
+                        }
+                    } else if ("Kasiyerler".equals(calisanTipi)) {
+                        Kasiyer seciliKasiyer = kasiyer.getKasiyerById(seciliId);
+                        if (seciliKasiyer != null) {
+                            Kasiyer_guncelle kasiyer_guncelle = new Kasiyer_guncelle(seciliKasiyer);
+                            kasiyer_guncelle.setVisible(true);
+                            kasiyer_guncelle.addWindowListener(new WindowAdapter() {
+                                @Override
+                                public void windowClosed(WindowEvent e) {
+                                    YukleCalisanlarTable(null, null);
+                                }
+                            });
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Helper.Mesaj("Güncelleme işlemi sırasında bir hata oluştu: " + ex.getMessage());
+                }
+            }
+        });
+
+        this.popup_calisanlar.add("Sil").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tbl_calisanlar.getSelectedRow() == -1) {
+                    Helper.Mesaj("Lütfen bir çalışan seçiniz!");
+                    return;
+                }
+
+                try {
+                    int seciliId = Integer.parseInt(tbl_calisanlar.getValueAt(tbl_calisanlar.getSelectedRow(), 0).toString());
+                    String calisanTipi = (String) cmb_f_calisanTuru.getSelectedItem();
+
+                    int onay = JOptionPane.showConfirmDialog(null,
+                            "Bu çalışanı silmek istediğinize emin misiniz?",
+                            "Onay",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (onay == JOptionPane.YES_OPTION) {
+                        boolean silmeBasarili = false;
+
+                        if ("Müdürler".equals(calisanTipi)) {
+                            silmeBasarili = mudur.silMudur(seciliId);
+                        } else if ("Kasiyerler".equals(calisanTipi)) {
+                            silmeBasarili = kasiyer.silKasiyer(seciliId);
+                        }
+
+                        if (silmeBasarili) {
+                            Helper.Mesaj("Çalışan başarıyla silindi");
+                            YukleCalisanlarTable(null, null);
+                        } else {
+                            Helper.Mesaj("Silme işlemi sırasında bir hata oluştu.");
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    Helper.Mesaj("Silme işlemi sırasında bir hata oluştu: " + ex.getMessage());
+                }
+            }
+        });
+
+        this.tbl_calisanlar.setComponentPopupMenu(this.popup_calisanlar);
     }
 }
 

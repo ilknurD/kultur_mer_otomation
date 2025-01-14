@@ -7,6 +7,8 @@ import java.util.ArrayList;
 public class KullaniciIslem {
     private Connection conn;
 
+
+
     public KullaniciIslem() {
         this.conn = VeriTabaniBaglantisi.getConnection();
     }
@@ -85,30 +87,6 @@ public class KullaniciIslem {
         mudur.setDepartman(rs.getString("mudur_departman"));
 
         return Kisi;
-    }
-
-    public ArrayList<kisi> kullanicilariGetir() {
-        ArrayList<kisi> kullaniciListe = new ArrayList<>();
-
-        try {
-            ResultSet rsKasiyer = this.conn.createStatement().executeQuery("SELECT * FROM kasiyerler");
-            while (rsKasiyer.next()) {
-                kullaniciListe.add(this.karsilastirKasiyer(rsKasiyer));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            ResultSet rsMudur = this.conn.createStatement().executeQuery("SELECT * FROM mudurler");
-            while (rsMudur.next()) {
-                kullaniciListe.add(this.karsilastirMudur(rsMudur));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return kullaniciListe;
     }
 
 }
