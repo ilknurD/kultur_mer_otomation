@@ -11,7 +11,7 @@ public class etkinlik {
     private String etkinlik_ad;
     private TYPE etkinlik_turu; // Sinema, Müzikal, Tiyatro
     private String etkinlik_tar;
-    public Connection conn;
+    public Connection conn = VeriTabaniBaglantisi.getConnection();
 
 
     public etkinlik(String etkinlik_ad, String etkinlik_tar, TYPE etkinlik_turu, int etkinlikFiyat, int etkinlikid, int salon_id) {
@@ -21,7 +21,6 @@ public class etkinlik {
         this.etkinlikFiyat = etkinlikFiyat;
         this.etkinlikid = etkinlikid;
         this.salon_id = salon_id;
-        this.conn = VeriTabaniBaglantisi.getConnection();
     }
 
 

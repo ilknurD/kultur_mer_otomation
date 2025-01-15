@@ -7,6 +7,8 @@ public class Bilet {
     private int etkinlikId;
     private String etkinlikTuru;
     private String etkinlikAdi;
+    private String etkinlikTarih;
+    private String seans;
     private int musteriId;
     private String musteriAdi;
     private String musteriSoyad;
@@ -16,18 +18,19 @@ public class Bilet {
     private int salonId;
     private String salonAdi;
     private int fiyat;
-    private Timestamp tarih;
+    private String tarih;
     private int kasaNo;
     private Connection conn;
     private musteri Musteri;
     private etkinlik Etkinlik;
 
-    public Bilet(int biletId, Connection conn, etkinlik etkinlik, String etkinlikAdi, int etkinlikId, String etkinlikTuru, int fiyat, int kasaNo, int koltukId, int koltukNo, musteri musteri, String musteriAdi, int musteriId, String musteriSoyad, String musteriTelefon, String salonAdi, int salonId, Timestamp tarih) {
+    public Bilet(int biletId, Connection conn, etkinlik etkinlik, String etkinlikAdi, int etkinlikId, String etkinlikTarih, String etkinlikTuru, int fiyat, int kasaNo, int koltukId, int koltukNo, musteri musteri, String musteriAdi, int musteriId, String musteriSoyad, String musteriTelefon, String salonAdi, int salonId, String seans, String tarih) {
         this.biletId = biletId;
         this.conn = conn;
         Etkinlik = etkinlik;
         this.etkinlikAdi = etkinlikAdi;
         this.etkinlikId = etkinlikId;
+        this.etkinlikTarih = etkinlikTarih;
         this.etkinlikTuru = etkinlikTuru;
         this.fiyat = fiyat;
         this.kasaNo = kasaNo;
@@ -40,6 +43,27 @@ public class Bilet {
         this.musteriTelefon = musteriTelefon;
         this.salonAdi = salonAdi;
         this.salonId = salonId;
+        this.seans = seans;
+        this.tarih = tarih;
+    }
+
+    public String getSeans() {
+        return seans;
+    }
+
+    public void setSeans(String seans) {
+        this.seans = seans;
+    }
+
+    public String getEtkinlikTarih() {
+        return etkinlikTarih;
+    }
+
+    public void setEtkinlikTarih(String etkinlikTarih) {
+        this.etkinlikTarih = etkinlikTarih;
+    }
+
+    public void setTarih(String tarih) {
         this.tarih = tarih;
     }
 
@@ -183,16 +207,12 @@ public class Bilet {
         this.koltukNo = koltukNo;
     }
 
-    public Timestamp getTarih() {
+    public String getTarih() {
         return tarih;
     }
 
-    public void setTarih(Timestamp tarih) {
-        this.tarih = tarih;
-    }
-
     public ArrayList<Bilet> biletListele() {
-        String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_adi, e.etkinlik_turu, " +
+        String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_adi, e.etkinlik_turu, e.etkinlik_tarihi, b.seans, " +
                 "s.salon_adi, b.koltuk_id, e.etkinlik_fiyati, b.tarih, k.kasiyer_kasaNo " +
                 "FROM biletler b " +
                 "INNER JOIN musteriler m ON b.musteri_id = m.musteri_id " +
@@ -223,10 +243,12 @@ public class Bilet {
         karsilastirBilet.setBiletId(RS.getInt("bilet_id"));
         karsilastirBilet.setEtkinlikTuru(RS.getString("etkinlik_turu"));
         karsilastirBilet.setEtkinlikAdi(RS.getString("etkinlik_adi"));
+        karsilastirBilet.setEtkinlikTarih(RS.getString("etkinlik_tarihi"));
+        karsilastirBilet.setSeans(RS.getString("seans"));
         karsilastirBilet.setMusteriAdi(RS.getString("ad"));
         karsilastirBilet.setMusteriSoyad(RS.getString("soyad"));
         karsilastirBilet.setMusteriTelefon(RS.getString("telefon"));
-        karsilastirBilet.setTarih(RS.getTimestamp("tarih")); // String'e çevirmeye gerek yok
+        karsilastirBilet.setTarih(RS.getString("tarih")); // String'e çevirmeye gerek yok
         karsilastirBilet.setSalonAdi(RS.getString("salon_adi"));
         karsilastirBilet.setKoltukNo(RS.getInt("koltuk_id"));
         karsilastirBilet.setFiyat(RS.getInt("etkinlik_fiyati"));
@@ -237,7 +259,7 @@ public class Bilet {
 
     public Bilet getBiletById(int id) {
         Bilet bilet = null;
-        String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_turu, e.etkinlik_adi, " +
+        String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_turu, e.etkinlik_adi, e.etkinlik_tarihi, b.seans, " +
                 "s.salon_adi, e.etkinlik_fiyati, b.koltuk_id, o.koltuk_no, b.salon_id, b.tarih, k.kasiyer_kasaNo " +
                 "FROM biletler b " +
                 "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +

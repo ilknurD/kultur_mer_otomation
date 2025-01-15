@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Bilet_Satin_Alma">
-  <grid id="27dc6" binding="biletAlPNL" layout-manager="GridLayoutManager" row-count="15" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+  <grid id="27dc6" binding="biletAlPNL" layout-manager="GridLayoutManager" row-count="12" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="50" left="70" bottom="50" right="70"/>
     <constraints>
-      <xy x="20" y="20" width="1021" height="523"/>
+      <xy x="20" y="20" width="1021" height="539"/>
     </constraints>
     <properties/>
     <border type="none">
@@ -12,7 +12,7 @@
     <children>
       <component id="ccd17" class="javax.swing.JLabel" binding="bilet_al_lbl">
         <constraints>
-          <grid row="1" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="BİLET SATIN AL"/>
@@ -20,7 +20,7 @@
       </component>
       <component id="81d8c" class="javax.swing.JLabel" binding="etklnk_tur_lbl">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Etkinlik Türü : "/>
@@ -28,7 +28,7 @@
       </component>
       <component id="47ee2" class="javax.swing.JLabel" binding="etklnk_ad_lbl">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Etkinlik Adı : "/>
@@ -36,7 +36,7 @@
       </component>
       <component id="d741e" class="javax.swing.JLabel" binding="etnlk_trh_lbl">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Etkinlik Tarih : "/>
@@ -44,66 +44,29 @@
       </component>
       <component id="509e8" class="javax.swing.JLabel" binding="etknlk_salon_lbl">
         <constraints>
-          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Etkinlik Salon No : "/>
+          <text value="Etkinlik Salon : "/>
         </properties>
       </component>
-      <component id="a4e89" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+      <component id="a4e89" class="javax.swing.JComboBox" binding="cmb_etkinlikTuru">
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
-      <component id="ecea5" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+      <component id="ecea5" class="javax.swing.JComboBox" binding="cmb_etkinlikAdi">
         <constraints>
-          <grid row="3" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <model/>
         </properties>
       </component>
-      <component id="6fdcd" class="javax.swing.JRadioButton" binding="salon1RadioButton" default-binding="true">
-        <constraints>
-          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Salon1"/>
-        </properties>
-      </component>
-      <component id="bd0fa" class="javax.swing.JRadioButton" binding="salon2RadioButton" default-binding="true">
-        <constraints>
-          <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Salon2"/>
-        </properties>
-      </component>
-      <component id="b8e4b" class="javax.swing.JRadioButton" binding="salon3RadioButton" default-binding="true">
-        <constraints>
-          <grid row="6" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Salon3"/>
-        </properties>
-      </component>
-      <component id="17813" class="javax.swing.JRadioButton" binding="salon4RadioButton" default-binding="true">
-        <constraints>
-          <grid row="6" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Salon4"/>
-        </properties>
-      </component>
-      <vspacer id="3c5c">
-        <constraints>
-          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
       <component id="5b976" class="javax.swing.JLabel" binding="scli_koltuk_lbl">
         <constraints>
-          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Seçilen Koltuk No :"/>
@@ -111,7 +74,7 @@
       </component>
       <component id="84b38" class="javax.swing.JLabel" binding="koltuk_no_lbl">
         <constraints>
-          <grid row="8" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Seçilen Koltuk No"/>
@@ -119,42 +82,37 @@
       </component>
       <component id="9f5b8" class="javax.swing.JButton" binding="biletAlButton" default-binding="true">
         <constraints>
-          <grid row="13" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Bilet Al"/>
         </properties>
       </component>
-      <vspacer id="90fd9">
-        <constraints>
-          <grid row="14" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
       <component id="16505" class="javax.swing.JLabel" binding="seans_lbl">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Seans Saati : "/>
         </properties>
       </component>
-      <component id="bc0c3" class="javax.swing.JComboBox" binding="comboBox4" default-binding="true">
+      <component id="bc0c3" class="javax.swing.JComboBox" binding="cmb_seans">
         <constraints>
-          <grid row="5" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
       </component>
       <component id="d34e" class="javax.swing.JButton" binding="koltukSecButton">
         <constraints>
-          <grid row="7" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Koltuk Seç"/>
         </properties>
       </component>
-      <component id="8f13d" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+      <component id="8f13d" class="javax.swing.JTextField" binding="fld_musteriAdSoyad">
         <constraints>
-          <grid row="9" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="8" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -162,63 +120,23 @@
       </component>
       <component id="b2ea8" class="javax.swing.JLabel" binding="musteri_ad_lbl">
         <constraints>
-          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Müşteri Ad-Soyad  : "/>
         </properties>
       </component>
-      <component id="a73ed" class="javax.swing.JLabel" binding="cinsiyet_lbl">
-        <constraints>
-          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Cinsiyet : "/>
-        </properties>
-      </component>
-      <component id="e1a1a" class="javax.swing.JRadioButton" binding="erkekRadioButton" default-binding="true">
-        <constraints>
-          <grid row="11" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Erkek"/>
-        </properties>
-      </component>
-      <component id="e8fb" class="javax.swing.JRadioButton" binding="kadinRadioButton">
-        <constraints>
-          <grid row="11" column="4" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Kadın"/>
-        </properties>
-      </component>
       <component id="108ba" class="javax.swing.JLabel" binding="fiyat_lbl">
         <constraints>
-          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Fiyat : "/>
         </properties>
       </component>
-      <component id="db4f1" class="javax.swing.JRadioButton" binding="Ogrenci_radio">
+      <component id="bf382" class="javax.swing.JTextField" binding="fld_etkinlikTarih">
         <constraints>
-          <grid row="12" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Öğrenci 150TL"/>
-        </properties>
-      </component>
-      <component id="1fdf" class="javax.swing.JRadioButton" binding="tam_radio">
-        <constraints>
-          <grid row="12" column="4" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Tam 200TL"/>
-        </properties>
-      </component>
-      <component id="bf382" class="javax.swing.JTextField" binding="textField2">
-        <constraints>
-          <grid row="4" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="3" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -226,30 +144,36 @@
       </component>
       <component id="10842" class="javax.swing.JLabel" binding="Musteri_tel_lbl">
         <constraints>
-          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Müşteri Tel Numarası : "/>
         </properties>
       </component>
-      <component id="33943" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+      <component id="90013" class="javax.swing.JTextField" binding="fld_fiyat">
         <constraints>
-          <grid row="10" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="10" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
         <properties/>
       </component>
-      <hspacer id="6453a">
+      <component id="33943" class="javax.swing.JTextField" binding="fld_musteriTel">
         <constraints>
-          <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
         </constraints>
-      </hspacer>
-      <hspacer id="d40ed">
+        <properties/>
+      </component>
+      <component id="520a6" class="javax.swing.JTextField" binding="fld_salon">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
         </constraints>
-      </hspacer>
+        <properties/>
+      </component>
     </children>
   </grid>
 </form>

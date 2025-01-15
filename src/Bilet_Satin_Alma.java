@@ -2,21 +2,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Bilet_Satin_Alma extends JFrame {
-    private etkinlik etkinlikk;
-    private JComboBox comboBox1;
-    private JComboBox comboBox2;
-    private JComboBox comboBox4;
-    private JRadioButton salon1RadioButton;
-    private JRadioButton salon2RadioButton;
-    private JRadioButton salon3RadioButton;
-    private JRadioButton salon4RadioButton;
+    private etkinlik Etkinlik;
+    private JComboBox cmb_etkinlikTuru;
+    private JComboBox cmb_etkinlikAdi;
+    private JComboBox cmb_seans;
     private JPanel biletAlPNL;
     private JLabel etklnk_tur_lbl;
     private JLabel etklnk_ad_lbl;
@@ -28,171 +28,170 @@ public class Bilet_Satin_Alma extends JFrame {
     private JLabel koltuk_no_lbl;
     private JButton biletAlButton;
     private JLabel seans_lbl;
-    private JTextField textField1;
+    private JTextField fld_musteriAdSoyad;
     private JLabel musteri_ad_lbl;
-    private JRadioButton erkekRadioButton;
-    private JRadioButton kadinRadioButton;
-    private JLabel cinsiyet_lbl;
     private JLabel fiyat_lbl;
-    private JRadioButton Ogrenci_radio;
-    private JRadioButton tam_radio;
-    private JTextField textField2;
-    private JTextField textField3;
+    private JTextField fld_etkinlikTarih;
+    private JTextField fld_musteriTel;
     private JLabel Musteri_tel_lbl;
+    private JTextField fld_fiyat;
+    private JTextField fld_salon;
+    private JComboBox comboBox3;
     private DefaultListModel<String> listModel;
     private JScrollPane scrollPane;
+    public Connection conn = VeriTabaniBaglantisi.getConnection();
+    public int tempEtkinlikID = 0;
 
-    public void updateKoltukNo(String Koltuk_no){
+    public void updateKoltukNo(String Koltuk_no) {
         koltuk_no_lbl.setText(Koltuk_no);
     }
 
-    public Bilet_Satin_Alma(){
-       add(biletAlPNL);
-       setTitle("Bilet Satın Alma Sayfası");
-       setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-       setSize(1600,900);
-       setExtendedState(JFrame.MAXIMIZED_BOTH);
-       setLocationRelativeTo(null);
+    public Bilet_Satin_Alma() {
+        add(biletAlPNL);
+        setTitle("Bilet Satın Alma Sayfası");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(1600, 900);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
 
-       ButtonGroup salon = new ButtonGroup();
-        salon.add(salon1RadioButton);
-        salon.add(salon2RadioButton);
-        salon.add(salon3RadioButton);
-        salon.add(salon4RadioButton);
+        etklnk_tur_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        etklnk_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        etnlk_trh_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        cmb_etkinlikTuru.setFont(new Font("Serif", Font.BOLD, 16));
+        cmb_etkinlikAdi.setFont(new Font("Serif", Font.BOLD, 16));
 
-       etklnk_tur_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       etklnk_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       etnlk_trh_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       etknlk_salon_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-
-       comboBox1.setFont(new Font("Serif", Font.BOLD, 16));
-       comboBox2.setFont(new Font("Serif", Font.BOLD, 16));
-
-       salon1RadioButton.setFont(new Font("Serif", Font.BOLD, 16));
-       salon2RadioButton.setFont(new Font("Serif", Font.BOLD, 16));
-       salon3RadioButton.setFont(new Font("Serif", Font.BOLD, 16));
-       salon4RadioButton.setFont(new Font("Serif", Font.BOLD, 16));
-
-       bilet_al_lbl.setFont(new Font("Serif", Font.BOLD, 20));
-       koltukSecButton.setFont(new Font("Serif", Font.BOLD, 16));
-       textField2.setFont(new Font("Serif", Font.BOLD, 16));
-       scli_koltuk_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       koltuk_no_lbl.setFont(new Font("Serif", Font.ITALIC, 15));
-       koltuk_no_lbl.setForeground(Color.lightGray);
-       biletAlButton.setFont(new Font("Serif", Font.BOLD, 16));
-       seans_lbl.setFont(new Font("Serif", Font.BOLD, 16) );
-       comboBox4.setFont(new Font("Serif", Font.BOLD, 16));
-       musteri_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       textField1.setFont(new Font("Serif", Font.BOLD, 16));
-       cinsiyet_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       erkekRadioButton.setFont(new Font("Serif", Font.BOLD, 16));
-       kadinRadioButton.setFont(new Font("Serif", Font.BOLD, 16));
-       Ogrenci_radio.setFont(new Font("Serif", Font.BOLD, 16));
-       tam_radio.setFont(new Font("Serif", Font.BOLD, 16));
-       fiyat_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       Musteri_tel_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-       textField3.setFont(new Font("Serif", Font.BOLD, 16));
+        bilet_al_lbl.setFont(new Font("Serif", Font.BOLD, 20));
+        koltukSecButton.setFont(new Font("Serif", Font.BOLD, 16));
+        fld_etkinlikTarih.setFont(new Font("Serif", Font.BOLD, 16));
+        scli_koltuk_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        koltuk_no_lbl.setFont(new Font("Serif", Font.ITALIC, 15));
+        koltuk_no_lbl.setForeground(Color.lightGray);
+        biletAlButton.setFont(new Font("Serif", Font.BOLD, 16));
+        seans_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        cmb_seans.setFont(new Font("Serif", Font.BOLD, 16));
+        musteri_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        fld_musteriAdSoyad.setFont(new Font("Serif", Font.BOLD, 16));
+        fiyat_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        Musteri_tel_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        fld_musteriTel.setFont(new Font("Serif", Font.BOLD, 16));
+        fld_salon.setFont(new Font("Serif",Font.BOLD,16));
+        etknlk_salon_lbl.setFont(new Font("Serif",Font.BOLD,16));
 
 
-        comboBox1.addItem("Tiyatro");
-        comboBox1.addItem("Sinema");
-        comboBox1.addItem("Müzikal");
-        comboBox1.setSelectedIndex(-1);
+        cmb_etkinlikTuru.addItem("Tiyatro");
+        cmb_etkinlikTuru.addItem("Sinema");
+        cmb_etkinlikTuru.addItem("Müzikal");
+        cmb_etkinlikTuru.setSelectedIndex(-1);
 
-        comboBox2.addItem("Delibal");//film
-        comboBox2.addItem("Matrix");//film
-        comboBox2.addItem("Hamlet");//Tiyatro
-        comboBox2.addItem("Romeo ve Juliet");//Tiyatro
-        comboBox2.addItem("Evgeny Grinko");//Müzikal (konser)
-        comboBox2.addItem("Cem Adrian");//Müzikal (konser)
-        comboBox2.setSelectedIndex(-1);
+        AtomicBoolean updatingComboBox = new AtomicBoolean(false); // Sarmalayıcı boolean
 
-        HashMap<String, String[]> etkinliksc = new HashMap<>();
-        etkinliksc.put("Tiyatro", new String[]{"Hamlet", "Romeo ve Juliet"});
-        etkinliksc.put("Sinema", new String[]{"Delibal", "Matrix" , "Kasırgalar", "Zaman Kapanı"});
-        etkinliksc.put("Müzikal", new String[]{"Evgeny Grinko", "Cem Adrian", "Melike Şahin", "Mabel Matiz"});
-
-
-        comboBox1.addActionListener(new ActionListener() {
+        cmb_etkinlikTuru.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selected1 = (String) comboBox1.getSelectedItem();
-                comboBox2.removeAllItems();
+                if (updatingComboBox.get()) return; // Eğer güncelleme yapılıyorsa işlem yapma
 
-                if(selected1 != null){
-                    String[] altlist = etkinliksc.get(selected1);
-                    for(String s : altlist){
-                        comboBox2.addItem(s);
-                        comboBox2.setSelectedIndex(-1);
+                updatingComboBox.set(true); // Güncelleme başlıyor
+                String selected1 = (String) cmb_etkinlikTuru.getSelectedItem();
+                cmb_etkinlikAdi.removeAllItems();
+
+                if (selected1 != null) {
+                    String query = "SELECT * FROM etkinlikler WHERE etkinlik_turu=?";
+                    try {
+                        PreparedStatement psmt = conn.prepareStatement(query);
+                        psmt.setString(1, selected1);
+                        ResultSet rs = psmt.executeQuery();
+                        while (rs.next()) {
+                            cmb_etkinlikAdi.addItem(rs.getString("etkinlik_adi"));
+                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    } finally {
+                        updatingComboBox.set(false); // Güncelleme bitti
+                    }
+                } else {
+                    updatingComboBox.set(false); // Güncelleme bitti
+                }
+            }
+        });
+
+        cmb_etkinlikAdi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (updatingComboBox.get()) return; // Eğer güncelleme yapılıyorsa işlem yapma
+
+                String selected2 = (String) cmb_etkinlikAdi.getSelectedItem();
+                if (selected2 != null) {
+                    String query2 = "SELECT " +
+                            "etkinlikler.etkinlik_id, " +
+                            "etkinlikler.etkinlik_adi, " +
+                            "etkinlikler.etkinlik_tarihi, " +
+                            "salonlar.salon_adi, " +
+                            "salonlar.kapasite " +
+                            "FROM etkinlikler " +
+                            "INNER JOIN salonlar ON etkinlikler.salon_id = salonlar.salon_id " +
+                            "WHERE etkinlik_adi = ?";
+                    try {
+                        PreparedStatement psmt = conn.prepareStatement(query2);
+                        psmt.setString(1, selected2);
+                        ResultSet rs = psmt.executeQuery();
+                        if (rs.next()) {
+                            fld_etkinlikTarih.setText(rs.getString("etkinlik_tarihi"));
+                            fld_salon.setText(rs.getString("salon_adi"));
+                            tempEtkinlikID = rs.getInt("etkinlik_id");
+                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
         });
 
-        comboBox4.addItem("12:00-14:00");
-        comboBox4.addItem("14:00-16:00");
-        comboBox4.addItem("16:00-18:00");
-        comboBox4.addItem("18:00-20:00");
-        comboBox4.addItem("20:00-22:00");
-        comboBox4.setSelectedIndex(-1);
 
-        ButtonGroup cinsiyet = new ButtonGroup();
-        cinsiyet.add(erkekRadioButton);
-        cinsiyet.add(kadinRadioButton);
-
-        ButtonGroup fiyat = new ButtonGroup();
-        fiyat.add(Ogrenci_radio);
-        fiyat.add(tam_radio);
+        cmb_seans.addItem("12:00-14:00");
+        cmb_seans.addItem("14:00-16:00");
+        cmb_seans.addItem("16:00-18:00");
+        cmb_seans.addItem("18:00-20:00");
+        cmb_seans.addItem("20:00-22:00");
+        cmb_seans.setSelectedIndex(-1);
 
         koltukSecButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                KoltukSecimi koltukSecimi = new KoltukSecimi(etkinlikk);
-                koltukSecimi.setVisible(true);
+                if(tempEtkinlikID > 0){
+                    Etkinlik = new etkinlik().getById(tempEtkinlikID);
+                    KoltukSecimi koltukSecimi = new KoltukSecimi(Etkinlik);
+                    koltukSecimi.setVisible(true);
+                }else{
+                    Helper.Mesaj("Önce etkinlik seçiniz!");
+                }
+
             }
         });
-
 
 
         biletAlButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                if (comboBox1.getSelectedIndex() == -1) {
+                if (cmb_etkinlikTuru.getSelectedIndex() == -1) {
                     JOptionPane.showMessageDialog(null,
                             "Lütfen Bir Etkinlik Türü Seçiniz.",
                             "Hata", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (comboBox2.getSelectedIndex() == -1) {
+                if (cmb_etkinlikAdi.getSelectedIndex() == -1) {
                     JOptionPane.showMessageDialog(null,
                             "Lütfen Bir Etkinlik Adı Seçiniz.",
                             "Hata", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (comboBox4.getSelectedIndex() == -1) {
+                if (cmb_seans.getSelectedIndex() == -1) {
                     JOptionPane.showMessageDialog(null,
                             "Lütfen Bir Etkinlik Seans Saati Seçiniz.",
                             "Hata", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                String salon_Secimi = "";
-                if (salon1RadioButton.isSelected()) {
-                    salon_Secimi = salon1RadioButton.getText();
-                } else if (salon2RadioButton.isSelected()) {
-                    salon_Secimi = salon2RadioButton.getText();
-                } else if (salon3RadioButton.isSelected()) {
-                    salon_Secimi = salon3RadioButton.getText();
-                } else if (salon4RadioButton.isSelected()) {
-                    salon_Secimi = salon4RadioButton.getText();
-                } else if (!salon1RadioButton.isSelected() && !salon2RadioButton.isSelected() && !salon3RadioButton.isSelected() && !salon4RadioButton.isSelected()) {
-                    JOptionPane.showMessageDialog(null,
-                            "Lütfen bir salon seçiniz.",
-                            "Hata", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                String tarih_secimi = textField2.getText().trim();
+                String tarih_secimi = fld_etkinlikTarih.getText().trim();
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/2025");
                 dateFormat.setLenient(false); // Geçersiz tarihleri engellemek için
 
@@ -211,82 +210,48 @@ public class Bilet_Satin_Alma extends JFrame {
                     return;
                 }
 
-                if (textField1.getText().trim().isEmpty()) {
+                if (fld_musteriAdSoyad.getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Lütfen müşteri adını giriniz.",
                             "Hata", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-                if (textField3.getText().trim().isEmpty()) {
+                if (fld_musteriTel.getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Lütfen müşteri telefonunu giriniz.",
                             "Hata", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                if (!salon_Secimi.isEmpty() && !tarih_secimi.isEmpty() &&
-                        !textField1.getText().trim().isEmpty() &&
-                        !textField3.getText().trim().isEmpty() &&
-                        comboBox1.getSelectedIndex() != -1 &&
-                        comboBox2.getSelectedIndex() != -1 &&
-                        comboBox4.getSelectedIndex() != -1)
-                {
 
-                    String etkinlikTuru = (String) comboBox1.getSelectedItem();
-                    String etkinlikAdi = (String) comboBox2.getSelectedItem();
-                    String seans = (String) comboBox4.getSelectedItem();
-                    String musteriAdi = textField1.getText().trim();
-                    String musteriTel = textField3.getText().trim();
-
-                    String cinsiyet = "";
-                    if (erkekRadioButton.isSelected()) {
-                        cinsiyet = "Erkek";
-                    } else if (kadinRadioButton.isSelected()) {
-                        cinsiyet = "Kadın";
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Cinsiyet seçmelisiniz!");
-                        return;
-                    }
-
-                    String fiyat = "";
-                    if (Ogrenci_radio.isSelected()) {
-                        fiyat = "Öğrenci 150TL";
-                    } else if (tam_radio.isSelected()) {
-                        fiyat = "Tam 200TL";
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Fiyat tipi seçmelisiniz!");
-                        return;
-                    }
+                String etkinlikTuru = (String) cmb_etkinlikTuru.getSelectedItem();
+                String etkinlikAdi = (String) cmb_etkinlikAdi.getSelectedItem();
+                String seans = (String) cmb_seans.getSelectedItem();
+                String musteriAdi = fld_musteriAdSoyad.getText().trim();
+                String musteriTel = fld_musteriTel.getText().trim();
 
 
+                JPanel panel = new JPanel(new GridLayout(0, 1));
+                panel.add(new JLabel("Etkinlik Türü: " + etkinlikTuru));
+                panel.add(new JLabel("Etkinlik Adı: " + etkinlikAdi));
+                panel.add(new JLabel("Tarih: " + tarih_secimi));
+                panel.add(new JLabel("Seans: " + seans));
+                // panel.add(new JLabel("Koltuk Seçimi" + koltuk_Secimi));
+                panel.add(new JLabel("Müşteri Adı: " + musteriAdi));
+                panel.add(new JLabel("Telefon: " + musteriTel));
 
-                    JPanel panel = new JPanel(new GridLayout(0, 1));
-                    panel.add(new JLabel("Etkinlik Türü: " + etkinlikTuru));
-                    panel.add(new JLabel("Etkinlik Adı: " + etkinlikAdi));
-                    panel.add(new JLabel("Tarih: " + tarih_secimi));
-                    panel.add(new JLabel("Seans: " + seans));
-                    panel.add(new JLabel("Salon: " + salon_Secimi));
-                    // panel.add(new JLabel("Koltuk Seçimi" + koltuk_Secimi));
-                    panel.add(new JLabel("Müşteri Adı: " + musteriAdi));
-                    panel.add(new JLabel("Telefon: " + musteriTel));
-                    panel.add(new JLabel("Cinsiyet: " + cinsiyet));
-                    panel.add(new JLabel("Fiyat: " + fiyat));
+                Bilet_Bilgi biletBilgiForm = new Bilet_Bilgi();
+                biletBilgiForm.setVisible(true);
 
-                    Bilet_Bilgi biletBilgiForm = new Bilet_Bilgi();
-                    biletBilgiForm.setVisible(true);
+                biletBilgiForm.updateEtkinlikTur(etkinlikTuru);
+                biletBilgiForm.updateEtkinlikAd(etkinlikAdi);
+                biletBilgiForm.updateEtkinlikTarih(tarih_secimi);
+                biletBilgiForm.updateEtkinlikSeans(seans);
+                biletBilgiForm.updateEtkinlikMusteriAd(musteriAdi);
+                biletBilgiForm.updateEtkinlikMusteritel(musteriTel);
 
-                    biletBilgiForm.updateEtkinlikTur(etkinlikTuru);
-                    biletBilgiForm.updateEtkinlikAd(etkinlikAdi);
-                    biletBilgiForm.updateEtkinlikTarih(tarih_secimi);
-                    biletBilgiForm.updateEtkinlikSeans(seans);
-                    biletBilgiForm.updateEtkinlikMusteriAd(musteriAdi);
-                    biletBilgiForm.updateEtkinlikMusteritel(musteriTel);
-                    biletBilgiForm.updateMusteriCinsiyet(cinsiyet);
-                    biletBilgiForm.updateEtkinlikFiyat(fiyat);
-                }
             }
-            });
+        });
 
-       }
-
+    }
 }

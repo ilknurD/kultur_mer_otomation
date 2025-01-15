@@ -371,30 +371,8 @@ public class Mudur_islem extends JFrame {
         this.tbl_etkinlikler.setEnabled(false);
     }
 
-    public ArrayList<Bilet> biletleriListele() {
-        ArrayList<Bilet> biletler1 = bilet.biletListele(); // Veritabanından cektim
-        DefaultTableModel model = (DefaultTableModel) tbl_biletler.getModel();
-        model.setRowCount(0);
-
-        for (Bilet bilet : biletler1) {
-            Object[] row = new Object[]{
-                    bilet.getBiletId(),
-                    bilet.getEtkinlikTuru(),
-                    bilet.getEtkinlikAdi(),
-                    bilet.getMusteriAdi(),
-                    bilet.getMusteriSoyad(),
-                    bilet.getTarih(),
-                    bilet.getSalonAdi(),
-                    bilet.getKoltukNo(),
-                    bilet.getFiyat()
-            };
-            model.addRow(row);
-        }
-        return biletler1;
-    }
-
     public void YukleBiletlerTable(ArrayList<Bilet> biletler) {
-        String[] columnBiletler = {"ID", "Etkinlik Türü", "Etkinlik Adı", "Müşteri Adı",
+        String[] columnBiletler = {"ID", "Etkinlik Türü", "Etkinlik Adı", "Etkinlik Tarihi", "Seans","Müşteri Adı",
                 "Müşteri Soyadı", "Müşteri Telefon", "Satılma Tarihi", "Salon", "Koltuk Numarası", "Kasa Numarası", "Fiyat"};
 
         DefaultTableModel model = new DefaultTableModel(columnBiletler, 0) {
@@ -413,6 +391,8 @@ public class Mudur_islem extends JFrame {
                     bilet.getBiletId(),
                     bilet.getEtkinlikTuru(),
                     bilet.getEtkinlikAdi(),
+                    bilet.getEtkinlikTarih(),
+                    bilet.getSeans(),
                     bilet.getMusteriAdi(),
                     bilet.getMusteriSoyad(),
                     bilet.getMusteriTelefon(),
