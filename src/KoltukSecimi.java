@@ -12,6 +12,18 @@ public class KoltukSecimi extends JFrame {
     private String secilenKoltuk = null;
     private etkinlik Etkinlik;
     private Connection conn = VeriTabaniBaglantisi.getConnection();
+    private KoltukSecimListener listener;
+
+    public void setKoltukSecimListener(KoltukSecimListener listener) {
+        this.listener = listener;
+    }
+
+    private void koltukSecildi(String koltukNo) {
+        if (listener != null) {
+            listener.koltukSecildi(koltukNo);
+        }
+        dispose(); // Dialogu kapat
+    }
 
     public KoltukSecimi(etkinlik Etkinlik) {
         this.Etkinlik = Etkinlik;
@@ -80,6 +92,10 @@ public class KoltukSecimi extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    public interface KoltukSecimListener {
+        void koltukSecildi(String koltukNo);
+    }
+
     private void handleKoltukSelection(int koltukNo, int row, int col) {
         if (secilenKoltuk != null) {
             int eskiKoltuk = Integer.parseInt(secilenKoltuk);
@@ -126,6 +142,10 @@ public class KoltukSecimi extends JFrame {
 
                 conn.commit();
                 JOptionPane.showMessageDialog(this, "Koltuk başarıyla seçildi: " + secilenKoltuk);
+                // Listener'a seçilen koltuğu ilet
+                if (listener != null) {
+                    listener.koltukSecildi(secilenKoltuk);
+                }
                 dispose();
 
             } else {//VERitabanında kayıt VAR yani koltuk DOLU

@@ -2,10 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,7 +25,7 @@ public class Bilet_Satin_Alma extends JFrame {
     private JLabel koltuk_no_lbl;
     private JButton biletAlButton;
     private JLabel seans_lbl;
-    private JTextField fld_musteriAdSoyad;
+    private JTextField fld_musteriAd;
     private JLabel musteri_ad_lbl;
     private JLabel fiyat_lbl;
     private JTextField fld_etkinlikTarih;
@@ -36,14 +33,43 @@ public class Bilet_Satin_Alma extends JFrame {
     private JLabel Musteri_tel_lbl;
     private JTextField fld_fiyat;
     private JTextField fld_salon;
+    private JComboBox cmb_kasaNo;
+    private JLabel lbl_kasaNo;
+    private JLabel musteri_soyad_lbl;
+    private JTextField fld_musteriSoyad;
     private JComboBox comboBox3;
     private DefaultListModel<String> listModel;
     private JScrollPane scrollPane;
     public Connection conn = VeriTabaniBaglantisi.getConnection();
     public int tempEtkinlikID = 0;
+    private int secilenKoltukId = -1;
 
-    public void updateKoltukNo(String Koltuk_no) {
-        koltuk_no_lbl.setText(Koltuk_no);
+    public void updateKoltukNo(String koltukNo) {
+        if (koltukNo != null && !koltukNo.trim().isEmpty()) {
+            koltuk_no_lbl.setText(koltukNo);
+            try {
+                secilenKoltukId = getKoltukId(koltukNo);
+                // Koltuğun başarıyla seçildiğini göstermek için label'ın rengini değiştir
+                koltuk_no_lbl.setForeground(Color.BLACK);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Koltuk ID'si alınırken hata oluştu!",
+                        "Hata", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private int getKoltukId(String koltukNo) throws SQLException {
+        String query = "SELECT koltuk_id FROM koltuklar WHERE koltuk_no = ?";
+        PreparedStatement pstmt = conn.prepareStatement(query);
+        pstmt.setString(1, koltukNo);
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt("koltuk_id");
+        }
+        return -1;
     }
 
     public Bilet_Satin_Alma() {
@@ -70,7 +96,7 @@ public class Bilet_Satin_Alma extends JFrame {
         seans_lbl.setFont(new Font("Serif", Font.BOLD, 16));
         cmb_seans.setFont(new Font("Serif", Font.BOLD, 16));
         musteri_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        fld_musteriAdSoyad.setFont(new Font("Serif", Font.BOLD, 16));
+        fld_musteriAd.setFont(new Font("Serif", Font.BOLD, 16));
         fiyat_lbl.setFont(new Font("Serif", Font.BOLD, 16));
         Musteri_tel_lbl.setFont(new Font("Serif", Font.BOLD, 16));
         fld_musteriTel.setFont(new Font("Serif", Font.BOLD, 16));
@@ -125,6 +151,7 @@ public class Bilet_Satin_Alma extends JFrame {
                             "etkinlikler.etkinlik_id, " +
                             "etkinlikler.etkinlik_adi, " +
                             "etkinlikler.etkinlik_tarihi, " +
+                            "etkinlikler.etkinlik_fiyati, " +
                             "salonlar.salon_adi, " +
                             "salonlar.kapasite " +
                             "FROM etkinlikler " +
@@ -135,8 +162,21 @@ public class Bilet_Satin_Alma extends JFrame {
                         psmt.setString(1, selected2);
                         ResultSet rs = psmt.executeQuery();
                         if (rs.next()) {
-                            fld_etkinlikTarih.setText(rs.getString("etkinlik_tarihi"));
+                            // Veritabanından gelen tarihi alıp formatlama
+                            String dbTarih = rs.getString("etkinlik_tarihi");
+                            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd"); // veritabanı formatı
+                            SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy"); // görüntüleme formatı
+                            try {
+                                Date date = dbFormat.parse(dbTarih);
+                                fld_etkinlikTarih.setText(displayFormat.format(date));
+                            } catch (ParseException ex) {
+                                ex.printStackTrace();
+                                fld_etkinlikTarih.setText(dbTarih); // hata durumunda orijinal formatı göster
+                            }
+
+//                            fld_etkinlikTarih.setText(rs.getString("etkinlik_tarihi"));
                             fld_salon.setText(rs.getString("salon_adi"));
+                            fld_fiyat.setText(String.valueOf(rs.getInt("etkinlik_fiyati")));
                             tempEtkinlikID = rs.getInt("etkinlik_id");
                         }
                     } catch (SQLException ex) {
@@ -160,6 +200,13 @@ public class Bilet_Satin_Alma extends JFrame {
                 if(tempEtkinlikID > 0){
                     Etkinlik = new etkinlik().getById(tempEtkinlikID);
                     KoltukSecimi koltukSecimi = new KoltukSecimi(Etkinlik);
+                    koltukSecimi.setKoltukSecimListener(new KoltukSecimi.KoltukSecimListener() {
+                        @Override
+                        public void koltukSecildi(String koltukNo) {
+                            // Seçilen koltuğu koltuk_no_lbl'ye yansıt
+                            updateKoltukNo(koltukNo);
+                        }
+                    });
                     koltukSecimi.setVisible(true);
                 }else{
                     Helper.Mesaj("Önce etkinlik seçiniz!");
@@ -168,6 +215,7 @@ public class Bilet_Satin_Alma extends JFrame {
             }
         });
 
+        kasaNoCekCmb();
 
         biletAlButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -192,8 +240,9 @@ public class Bilet_Satin_Alma extends JFrame {
                 }
 
                 String tarih_secimi = fld_etkinlikTarih.getText().trim();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/2025");
-                dateFormat.setLenient(false); // Geçersiz tarihleri engellemek için
+                SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/2025");
+                SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+                displayFormat.setLenient(false); // Geçersiz tarihleri engellemek için
 
                 try {
                     if (tarih_secimi.isEmpty()) {
@@ -202,7 +251,8 @@ public class Bilet_Satin_Alma extends JFrame {
                                 "Hata", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    Date date = dateFormat.parse(tarih_secimi);
+                    Date date = displayFormat.parse(tarih_secimi);
+                    String dbTarih = dbFormat.format(date);
                 } catch (ParseException ex) {
                     JOptionPane.showMessageDialog(null,
                             "Geçersiz tarih formatı! Lütfen dd/MM/2025 formatında bir tarih giriniz.",
@@ -210,7 +260,14 @@ public class Bilet_Satin_Alma extends JFrame {
                     return;
                 }
 
-                if (fld_musteriAdSoyad.getText().trim().isEmpty()) {
+//                if (secilenKoltukId == -1) {
+//                    JOptionPane.showMessageDialog(null,
+//                            "Lütfen bir koltuk seçiniz.",
+//                            "Hata", JOptionPane.ERROR_MESSAGE);
+//                    return;
+//                }
+
+                if (fld_musteriAd.getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Lütfen müşteri adını giriniz.",
                             "Hata", JOptionPane.ERROR_MESSAGE);
@@ -227,7 +284,7 @@ public class Bilet_Satin_Alma extends JFrame {
                 String etkinlikTuru = (String) cmb_etkinlikTuru.getSelectedItem();
                 String etkinlikAdi = (String) cmb_etkinlikAdi.getSelectedItem();
                 String seans = (String) cmb_seans.getSelectedItem();
-                String musteriAdi = fld_musteriAdSoyad.getText().trim();
+                String musteriAdi = fld_musteriAd.getText().trim();
                 String musteriTel = fld_musteriTel.getText().trim();
 
 
@@ -250,8 +307,118 @@ public class Bilet_Satin_Alma extends JFrame {
                 biletBilgiForm.updateEtkinlikMusteriAd(musteriAdi);
                 biletBilgiForm.updateEtkinlikMusteritel(musteriTel);
 
+                try {
+                    int musteriId = musteriKaydet(fld_musteriAd.getText().trim(), fld_musteriSoyad.getText().trim(),fld_musteriTel.getText().trim());
+                    if (musteriId != -1){
+                        boolean biletKaydedildi = biletKaydet(
+                                tempEtkinlikID,
+                                musteriId,
+                                Integer.parseInt(cmb_kasaNo.getSelectedItem().toString()),
+                                secilenKoltukId,
+                                (String) cmb_seans.getSelectedItem(),
+                                Integer.parseInt(fld_fiyat.getText().toString()),
+                                fld_etkinlikTarih.getText().trim()
+                        );
+                        if (biletKaydedildi){
+                            Helper.Mesaj("Bilet başarıyla kaydedildi.");
+
+                            Bilet_Bilgi biletBilgi = new Bilet_Bilgi();
+                            biletBilgi.setVisible(true);
+                            biletBilgi.updateEtkinlikTur((String) cmb_etkinlikTuru.getSelectedItem());
+                            biletBilgi.updateEtkinlikAd((String) cmb_etkinlikAdi.getSelectedItem());
+                            biletBilgi.updateEtkinlikTarih(fld_etkinlikTarih.getText());
+                            biletBilgi.updateEtkinlikSeans((String) cmb_seans.getSelectedItem());
+                            biletBilgi.updateEtkinlikMusteriAd(fld_musteriAd.getText().trim());
+                            biletBilgi.updateEtkinlikMusteritel(fld_musteriTel.getText().trim());
+//                            biletBilgi.updateKoltukNo(koltuk_no_lbl.getText());
+                        }
+                    }
+                }catch (SQLException ex){
+                    Helper.Mesaj("Veritabanı hatası: "+ ex.getMessage());
+                }
             }
         });
 
+    }
+
+    private void kasaNoCekCmb(){
+        try{
+            String query = "SELECT kasiyer_kasaNo FROM kasiyerler";
+            PreparedStatement psmt = conn.prepareStatement(query);
+            ResultSet rs = psmt.executeQuery();
+            cmb_kasaNo.removeAllItems();
+            while (rs.next()){
+                cmb_kasaNo.addItem(String.valueOf(rs.getInt("kasiyer_kasaNo")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Helper.Mesaj("Kasa numaraları yüklenirken hata oluştu.");
+        }
+    }
+
+    private int musteriKaydet(String ad, String soyad, String telefon) throws SQLException{
+        String insertQuery = "INSERT INTO musteriler (ad, soyad, telefon) VALUES (?, ?, ?)";
+        PreparedStatement psmt = conn.prepareStatement(insertQuery);
+        psmt.setString(1, ad);
+        psmt.setString(2, soyad);
+        psmt.setString(3, telefon);
+        psmt.executeUpdate();
+
+        // Son eklenen ID'yi al
+        String getIdQuery = "SELECT LAST_INSERT_ID() as id";
+        PreparedStatement getIdStmt = conn.prepareStatement(getIdQuery);
+        ResultSet rs = getIdStmt.executeQuery();
+
+        if (rs.next()) {
+            return rs.getInt("id");
+        } else {
+            throw new SQLException("Müşteri ID'si alınamadı.");
+        }
+    }
+
+    private boolean biletKaydet(int etkinlikId, int musteriId, int kasaNo, int koltukId,
+                                String seans, int fiyat, String tarih) throws SQLException {
+
+        String salonQuery = "SELECT salon_id FROM salonlar WHERE salon_adi = ?";
+        PreparedStatement salonStmt = conn.prepareStatement(salonQuery);
+        salonStmt.setString(1, fld_salon.getText().trim());
+        ResultSet salonRs = salonStmt.executeQuery();
+
+        int salonId;
+        if (salonRs.next()) {
+            salonId = salonRs.getInt("salon_id");
+        } else {
+            throw new SQLException("Salon bulunamadı!");
+        }
+
+        String query = "INSERT INTO biletler (etkinlik_id, musteri_id, kasaNo, koltuk_id, seans, fiyat, tarih, salon_id, musteriTel) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            // Görüntüleme formatından Date nesnesine çevir
+            Date date = displayFormat.parse(tarih);
+            // Veritabanı formatına çevir
+            String dbTarih = dbFormat.format(date);
+
+            PreparedStatement psmt = conn.prepareStatement(query);
+            psmt.setInt(1, etkinlikId);
+            psmt.setInt(2, musteriId);
+            psmt.setInt(3, kasaNo);
+            psmt.setInt(4, koltukId);
+            psmt.setString(5, seans);
+            psmt.setInt(6, fiyat);
+            psmt.setString(7, dbTarih);
+            psmt.setInt(8, salonId);
+            psmt.setString(9, fld_musteriTel.getText().trim());
+
+            int etkilenenSatirlar = psmt.executeUpdate();
+            return etkilenenSatirlar > 0;
+
+        } catch (ParseException ex) {
+            throw new SQLException("Tarih formatı dönüştürülemedi: " + ex.getMessage());
+        }
     }
 }
