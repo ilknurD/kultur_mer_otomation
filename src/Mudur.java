@@ -83,6 +83,24 @@ public class Mudur extends Calisan{
             return false;
         }
     }
+
+    public boolean ekleMudur() {
+        String query = "INSERT INTO mudurler (mudur_ad, mudur_soyad, mudur_eposta, mudur_departman, mudur_maas) VALUES (?, ?, ?, ?, ?)";
+
+        try {
+            PreparedStatement pr = conn.prepareStatement(query);
+            pr.setString(1, this.getAd());
+            pr.setString(2, this.getSoyad());
+            pr.setString(3, this.getMail());
+            pr.setString(4, this.getDepartman());
+            pr.setInt(5, this.getMaas());
+
+            return pr.executeUpdate() != -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
 
 

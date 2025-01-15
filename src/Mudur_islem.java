@@ -59,7 +59,7 @@ public class Mudur_islem extends JFrame {
     public etkinlik Etkinlik = new etkinlik();
     public Bilet bilet = new Bilet();
     public Calisan calisan = new Calisan();
-
+    private UserSession session;
 
     public ArrayList<etkinlik> query(String query) { //sorguyu dışardan alıp ona göre listeleme yapabilelim diye
         ArrayList<etkinlik> etkinlikListeleme = new ArrayList<>();
@@ -138,10 +138,10 @@ public class Mudur_islem extends JFrame {
     kisi Kisi = new kisi();
     Mudur mudur = new Mudur();
     Kasiyer kasiyer = new Kasiyer();
-    UserSession session = UserSession.getInstance();
 
     public Mudur_islem() {
         add(mudur_islm_PNL);
+        this.session = UserSession.getInstance();
         setSize(1600, 900);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Pencereyi tam ekran yapar
         setTitle("Müdür İşlemleri");
@@ -209,6 +209,11 @@ public class Mudur_islem extends JFrame {
             }
         });
 
+        tabbedPane1.addChangeListener(e -> {
+            // Tab değiştiğinde session'ı yeniliyoruz
+            this.session = UserSession.getInstance();
+        });
+
 
         //Etlinlikler TAB
         this.cmb_f_etkinlikler_turu.setModel(new DefaultComboBoxModel<>(etkinlik.TYPE.values())); //Türleri comboya aktardımm
@@ -241,7 +246,7 @@ public class Mudur_islem extends JFrame {
         YukleBiletlerButtonIslem();
         YukleBiletlerPopup();
 
-//      YukleCalisanlarButtonIslem();
+      YukleCalisanlarButtonIslem();
         YukleCalisanlarPopup();
 
         cmb_f_calisanTuru.addActionListener(new ActionListener() {
@@ -542,7 +547,6 @@ public class Mudur_islem extends JFrame {
 
     public void YukleCalisanlarTable(String[] columnHeaders, ArrayList<Object[]> data) {
         String selected = (String) cmb_f_calisanTuru.getSelectedItem();
-        ;
         String query = "";
         if ("Müdürler".equals(selected)) {
             columnHeaders = new String[]{"ID", "Ad", "Soyad", "E-posta", "Departman", "Maaş"};
@@ -563,7 +567,6 @@ public class Mudur_islem extends JFrame {
             if (columnHeaders != null && columnHeaders.length > 0) {
                 for (String header : columnHeaders) {
                     if (header == "Maaş" && "Müdürler".equals(selected)) {
-                        UserSession session = UserSession.getInstance();
                         if (session.GenelMudurKontrol()) {
                             mdl_calisanlar_t.addColumn(header);
                         }
@@ -611,15 +614,20 @@ public class Mudur_islem extends JFrame {
 
                     if ("Müdürler".equals(calisanTipi)) {
                         Mudur seciliMudur = mudur.getMudurById(seciliId);
-                        if (seciliMudur != null) {
-                            Mudur_guncelle mudur_guncelle = new Mudur_guncelle(seciliMudur);
-                            mudur_guncelle.setVisible(true);
-                            mudur_guncelle.addWindowListener(new WindowAdapter() {
-                                @Override
-                                public void windowClosed(WindowEvent e) {
-                                    YukleCalisanlarTable(null, null);
-                                }
-                            });
+                        if (!UserSession.getInstance().GenelMudurKontrol()) { // Sadece genel müdür kontrolü
+                            Helper.Mesaj("Sadece genel müdürler müdür biilgilerini değiştirebilir!");
+                            return;
+                        }else {
+                            if (seciliMudur != null){
+                                Mudur_guncelle mudur_guncelle = new Mudur_guncelle(seciliMudur);
+                                mudur_guncelle.setVisible(true);
+                                mudur_guncelle.addWindowListener(new WindowAdapter() {
+                                    @Override
+                                    public void windowClosed(WindowEvent e) {
+                                        YukleCalisanlarTable(null, null);
+                                    }
+                                });
+                            }
                         }
                     } else if ("Kasiyerler".equals(calisanTipi)) {
                         Kasiyer seciliKasiyer = kasiyer.getKasiyerById(seciliId);
@@ -646,6 +654,12 @@ public class Mudur_islem extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (tbl_calisanlar.getSelectedRow() == -1) {
                     Helper.Mesaj("Lütfen bir çalışan seçiniz!");
+                    return;
+                }
+
+                // Sadece genel müdürlerin silme işlemi yapabilmesi için kontrol ekliyoruz
+                if (!UserSession.getInstance().GenelMudurKontrol()) {
+                    Helper.Mesaj("Sadece genel müdürler çalışanları silebilir!");
                     return;
                 }
 
@@ -683,6 +697,48 @@ public class Mudur_islem extends JFrame {
         });
 
         this.tbl_calisanlar.setComponentPopupMenu(this.popup_calisanlar);
+    }
+
+    public void YukleCalisanlarButtonIslem() {
+        btn_f_calisanlar_ekle.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String secilenTip = (String) cmb_f_calisanTuru.getSelectedItem();
+
+                if (secilenTip == null) {
+                    Helper.Mesaj("Lütfen bir çalışan türü seçiniz!");
+                    return;
+                }
+
+                if ("Kasiyerler".equals(secilenTip)) {
+                    Kasiyer yeniKasiyer = new Kasiyer();
+                    Kasiyer_guncelle kasiyerForm = new Kasiyer_guncelle(yeniKasiyer);
+                    kasiyerForm.setVisible(true);
+                    kasiyerForm.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            YukleCalisanlarTable(null, null);
+                        }
+                    });
+                }
+                else if ("Müdürler".equals(secilenTip)) {
+                    if (!UserSession.getInstance().GenelMudurKontrol()) { // Sadece genel müdür kontrolü
+                        Helper.Mesaj("Sadece genel müdürler yeni müdür ekleyebilir!");
+                        return;
+                    }
+
+                    Mudur yeniMudur = new Mudur();
+                    Mudur_guncelle mudurForm = new Mudur_guncelle(yeniMudur);
+                    mudurForm.setVisible(true);
+                    mudurForm.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            YukleCalisanlarTable(null, null);
+                        }
+                    });
+                }
+            }
+        });
     }
 }
 

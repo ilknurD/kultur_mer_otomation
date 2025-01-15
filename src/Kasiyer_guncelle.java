@@ -16,13 +16,17 @@ public class Kasiyer_guncelle extends JFrame {
     private JLabel lbl_baslik;
     private JLabel lbl_kasiyer_soyad;
     private Kasiyer kasiyer;
+    private boolean isUpdate;
 
     public Kasiyer_guncelle(Kasiyer kasiyer) {
         this.kasiyer = kasiyer;
+        this.isUpdate = (kasiyer.getId() != 0); // ID 0 ise yeni kayıt, değilse güncelleme
         add(kasiyer_guncelle_panel);
         setSize(400, 400);
         setLocationRelativeTo(null);
-        setTitle("Kasiyer Güncelle");
+        setTitle(isUpdate ? "Kasiyer Güncelle" : "Yeni Kasiyer Ekle");
+        lbl_baslik.setText(isUpdate ? "Kasiyer Güncelle" : "Yeni Kasiyer Ekle");
+        btn_guncelle.setText(isUpdate ? "Güncelle" : "Ekle");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setSize(500, 700);
         int x = (Toolkit.getDefaultToolkit().getScreenSize().width - this.getSize().width) / 2;
