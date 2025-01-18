@@ -39,7 +39,6 @@ public class Mudur_islem extends JFrame {
     private JPanel calisanlar_filtre_pnl;
     private JComboBox cmb_f_calisanTuru;
     private JTextField fld_f_calisanAdi;
-    private JTextField fld_f_maas;
     private JButton btn_f_calisanlar_ara;
     private JButton btn_f_calisanlar_temizle;
     private JButton btn_f_calisanlar_ekle;
@@ -134,6 +133,48 @@ public class Mudur_islem extends JFrame {
         return biletListesi;
     }
 
+    public ArrayList<Object[]> filtreleCalisanlar(String calisanAdi, String calisanTipi) {
+        ArrayList<Object[]> filtrelenenCalisanlar = new ArrayList<>();
+        StringBuilder query = new StringBuilder();
+        ArrayList<String> kosullar = new ArrayList<>();
+
+        if ("Müdürler".equals(calisanTipi)) {
+            query.append("SELECT mudur_id, mudur_ad, mudur_soyad, mudur_eposta, mudur_departman, mudur_maas FROM mudurler WHERE 1=1");
+
+            if (calisanAdi != null && !calisanAdi.isEmpty()) {
+                kosullar.add("(mudur_ad LIKE '%" + calisanAdi + "%' OR mudur_soyad LIKE '%" + calisanAdi + "%')");
+            }
+        } else if ("Kasiyerler".equals(calisanTipi)) {
+            query.append("SELECT kasiyer_id, kasiyer_ad, kasiyer_soyad, kasiyer_eposta, kasiyer_kasaNo, kasiyer_maas FROM kasiyerler WHERE 1=1");
+
+            if (calisanAdi != null && !calisanAdi.isEmpty()) {
+                kosullar.add("(kasiyer_ad LIKE '%" + calisanAdi + "%' OR kasiyer_soyad LIKE '%" + calisanAdi + "%')");
+            }
+        }
+
+        if (!kosullar.isEmpty()) {
+            query.append(" AND ").append(String.join(" AND ", kosullar));
+        }
+
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query.toString())) {
+
+            while (rs.next()) {
+                Object[] row = new Object[6]; // 6 sütun için
+                for (int i = 1; i <= 6; i++) {
+                    row[i-1] = rs.getObject(i);
+                }
+                filtrelenenCalisanlar.add(row);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Helper.Mesaj("Çalışanları filtrelerken bir hata oluştu.");
+        }
+
+        return filtrelenenCalisanlar;
+    }
+
+
 
     kisi Kisi = new kisi();
     Mudur mudur = new Mudur();
@@ -189,8 +230,6 @@ public class Mudur_islem extends JFrame {
         lbl_f_calisanTuru.setFont(new Font("Serif", Font.BOLD, 16));
         cmb_f_calisanTuru.setFont(new Font("Serif", Font.BOLD, 16));
         fld_f_calisanAdi.setFont(new Font("Serif", Font.BOLD, 16));
-        lbl_f_maas.setFont(new Font("Serif", Font.BOLD, 16));
-        fld_f_maas.setFont(new Font("Serif", Font.BOLD, 16));
         btn_f_calisanlar_ara.setFont(new Font("Serif", Font.BOLD, 16));
         btn_f_calisanlar_ekle.setFont(new Font("Serif", Font.BOLD, 16));
         btn_f_calisanlar_temizle.setFont(new Font("Serif", Font.BOLD, 16));
@@ -680,6 +719,34 @@ public class Mudur_islem extends JFrame {
     }
 
     public void YukleCalisanlarButtonIslem() {
+        btn_f_calisanlar_ara.addActionListener(e -> {
+            try {
+                String calisanAdi = fld_f_calisanAdi.getText().trim();
+                String calisanTipi = (String) cmb_f_calisanTuru.getSelectedItem();
+
+                ArrayList<Object[]> filtrelenenCalisanlar = filtreleCalisanlar(calisanAdi, calisanTipi);
+
+                // Tablo modelini temizle
+                mdl_calisanlar_t.setRowCount(0);
+
+                // Filtrelenmiş sonuçları tabloya ekle
+                for (Object[] row : filtrelenenCalisanlar) {
+                    mdl_calisanlar_t.addRow(row);
+                }
+            } catch (NumberFormatException ex) {
+                Helper.Mesaj("Lütfen maaş için geçerli bir sayı giriniz!");
+            }
+        });
+
+        btn_f_calisanlar_temizle.addActionListener(e -> {
+            // Filtreleme alanlarını temizle
+            fld_f_calisanAdi.setText("");
+            cmb_f_calisanTuru.setSelectedItem("Müdürler"); // Varsayılan seçenek
+
+            // Tabloyu yeniden yükle
+            YukleCalisanlarTable(null, null);
+        });
+
         btn_f_calisanlar_ekle.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

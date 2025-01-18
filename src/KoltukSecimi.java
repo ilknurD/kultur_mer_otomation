@@ -10,44 +10,36 @@ public class KoltukSecimi extends JFrame {
     private JButton[][] koltuklar;
     private Set<String> doluKoltuklar;
     private String secilenKoltuk = null;
-    private etkinlik Etkinlik;
-    private Connection conn = VeriTabaniBaglantisi.getConnection();
+    private etkinlik etkinlik;
+    private Connection conn;
     private KoltukSecimListener listener;
+
+    public KoltukSecimi(etkinlik etkinlik) {
+        this.etkinlik = etkinlik;
+        setTitle("Koltuk Seçimi - " + etkinlik.getEtkinlik_ad());
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        conn = VeriTabaniBaglantisi.getConnection();
+        doluKoltuklar = getDoluKoltuklar();
+        initializeUI();
+    }
 
     public void setKoltukSecimListener(KoltukSecimListener listener) {
         this.listener = listener;
     }
 
-    private void koltukSecildi(String koltukNo) {
-        if (listener != null) {
-            listener.koltukSecildi(koltukNo);
-        }
-        dispose(); // Dialogu kapat
-    }
-
-    public KoltukSecimi(etkinlik Etkinlik) {
-        this.Etkinlik = Etkinlik;
-        setTitle("Koltuk Seçimi - " + Etkinlik.getEtkinlik_ad());
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(new BorderLayout());
-
-
-        doluKoltuklar = getDoluKoltuklar();
-        initializeUI();
-    }
-
-
     private Set<String> getDoluKoltuklar() {
         Set<String> doluKoltuklar = new HashSet<>();
-        try {
-            String query = "SELECT koltuk_no FROM koltuklar WHERE etkinlik_id = ? AND bilet_durumu = 'DOLU'";
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, Etkinlik.getEtkinlikid());
+        String query = "SELECT k.koltuk_no FROM koltuklar k " +
+                "WHERE k.etkinlik_id = ? AND k.salon_id = ? AND k.bilet_durumu = 'DOLU'";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, etkinlik.getEtkinlikid());
+            stmt.setInt(2, etkinlik.getSalon_id());
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
-                doluKoltuklar.add(String.valueOf(rs.getInt("koltuk_no")));
+                doluKoltuklar.add(rs.getString("koltuk_no"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,10 +84,6 @@ public class KoltukSecimi extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public interface KoltukSecimListener {
-        void koltukSecildi(String koltukNo);
-    }
-
     private void handleKoltukSelection(int koltukNo, int row, int col) {
         if (secilenKoltuk != null) {
             int eskiKoltuk = Integer.parseInt(secilenKoltuk);
@@ -104,13 +92,8 @@ public class KoltukSecimi extends JFrame {
             koltuklar[eskiRow][eskiCol].setBackground(Color.GREEN);
         }
 
-        String yeniKoltuk = String.valueOf(koltukNo);
-        if (secilenKoltuk != null && secilenKoltuk.equals(yeniKoltuk)) {
-            secilenKoltuk = null;
-        } else {
-            secilenKoltuk = yeniKoltuk;
-            koltuklar[row][col].setBackground(Color.YELLOW);
-        }
+        secilenKoltuk = String.valueOf(koltukNo);
+        koltuklar[row][col].setBackground(Color.YELLOW);
     }
 
     private void handleOnaylaButton() {
@@ -122,42 +105,42 @@ public class KoltukSecimi extends JFrame {
         try {
             conn.setAutoCommit(false);
 
-            // Koltuğun durumunu son kez kontrol et
-            String checkQuery = "SELECT bilet_durumu FROM koltuklar WHERE koltuk_no = ? AND etkinlik_id = ?";
-            PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
-            checkStmt.setInt(1, Integer.parseInt(secilenKoltuk));
-            checkStmt.setInt(2, Etkinlik.getEtkinlikid());
-            ResultSet rs = checkStmt.executeQuery();
+            String checkQuery = "SELECT bilet_durumu FROM koltuklar WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                checkStmt.setInt(1, Integer.parseInt(secilenKoltuk));
+                checkStmt.setInt(2, etkinlik.getEtkinlikid());
+                checkStmt.setInt(3, etkinlik.getSalon_id());
+                ResultSet rs = checkStmt.executeQuery();
 
-            Helper.Mesaj("Seçilen koltuk no: " + secilenKoltuk + "\n Etkinlik ID: " + Etkinlik.getEtkinlikid());
-
-            if (!rs.next()) { // sorgu boş dönüyo yani koltuk BOŞ
-                // Koltuk müsaitse, durumunu güncelle
-                String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU' " +
-                        "WHERE koltuk_no = ? AND etkinlik_id = ?";
-                PreparedStatement updateStmt = conn.prepareStatement(updateQuery);
-                updateStmt.setInt(1, Integer.parseInt(secilenKoltuk));
-                updateStmt.setInt(2, Etkinlik.getEtkinlikid());
-                updateStmt.executeUpdate();
-
-                conn.commit();
-                JOptionPane.showMessageDialog(this, "Koltuk başarıyla seçildi: " + secilenKoltuk);
-                // Listener'a seçilen koltuğu ilet
-                if (listener != null) {
-                    listener.koltukSecildi(secilenKoltuk);
+                if (rs.next() && "DOLU".equals(rs.getString("bilet_durumu"))) {
+                    conn.rollback();
+                    JOptionPane.showMessageDialog(this, "Seçilen koltuk başka bir kullanıcı tarafından alınmış!");
+                    refreshKoltuklar();
+                    return;
                 }
-                dispose();
-
-            } else {//VERitabanında kayıt VAR yani koltuk DOLU
-                conn.rollback();
-                JOptionPane.showMessageDialog(this, "Seçilen koltuk başka bir kullanıcı tarafından alınmış!");
-                refreshKoltuklar();
             }
+
+            String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU' WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                updateStmt.setInt(1, Integer.parseInt(secilenKoltuk));
+                updateStmt.setInt(2, etkinlik.getEtkinlikid());
+                updateStmt.setInt(3, etkinlik.getSalon_id());
+                updateStmt.executeUpdate();
+            }
+
+            conn.commit();
+            JOptionPane.showMessageDialog(this, "Koltuk başarıyla seçildi: " + secilenKoltuk);
+
+            if (listener != null) {
+                listener.koltukSecildi(secilenKoltuk);
+            }
+            dispose();
+
         } catch (SQLException ex) {
             try {
                 conn.rollback();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
             }
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "İşlem sırasında bir hata oluştu!");
@@ -190,5 +173,9 @@ public class KoltukSecimi extends JFrame {
             e.printStackTrace();
         }
         super.dispose();
+    }
+
+    public interface KoltukSecimListener {
+        void koltukSecildi(String koltukNo);
     }
 }

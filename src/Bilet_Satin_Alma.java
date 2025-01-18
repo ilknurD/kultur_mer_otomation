@@ -44,6 +44,20 @@ public class Bilet_Satin_Alma extends JFrame {
     public int tempEtkinlikID = 0;
     private int secilenKoltukId = -1;
 
+    public void temizle() {
+        cmb_etkinlikTuru.removeAllItems();
+        cmb_etkinlikAdi.removeAllItems();
+        fld_etkinlikTarih.setText("");
+        cmb_seans.setSelectedIndex(-1);
+        fld_musteriTel.setText("");
+        fld_musteriAd.setText("");
+        fld_musteriSoyad.setText("");
+        fld_fiyat.setText("");
+        fld_salon.setText("");
+        koltuk_no_lbl.setText("");
+        cmb_kasaNo.setSelectedIndex(-1);
+    }
+
     public void updateKoltukNo(String koltukNo) {
         if (koltukNo != null && !koltukNo.trim().isEmpty()) {
             koltuk_no_lbl.setText(koltukNo);
@@ -72,37 +86,77 @@ public class Bilet_Satin_Alma extends JFrame {
         return -1;
     }
 
+    private void etkinlikSecildiginde(int etkinlikId, int salonId) {
+        try {
+            // Önce bu etkinlik için koltukların oluşturulup oluşturulmadığını kontrol et
+            String checkQuery = "SELECT COUNT(*) as count FROM koltuklar WHERE etkinlik_id = ? AND salon_id = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
+            checkStmt.setInt(1, etkinlikId);
+            checkStmt.setInt(2, salonId);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next() && rs.getInt("count") == 0) {
+                // Salonun kapasitesini al
+                String kapasiteQuery = "SELECT kapasite FROM salonlar WHERE salon_id = ?";
+                PreparedStatement kapasiteStmt = conn.prepareStatement(kapasiteQuery);
+                kapasiteStmt.setInt(1, salonId);
+                ResultSet kapasiteRs = kapasiteStmt.executeQuery();
+
+                if (kapasiteRs.next()) {
+                    int kapasite = kapasiteRs.getInt("kapasite");
+
+                    // Her koltuk için kayıt oluştur
+                    String insertQuery = "INSERT INTO koltuklar (koltuk_no, salon_id, etkinlik_id, bilet_durumu) VALUES (?, ?, ?, 'BOŞ')";
+                    PreparedStatement insertStmt = conn.prepareStatement(insertQuery);
+
+                    for (int i = 1; i <= kapasite; i++) {
+                        insertStmt.setInt(1, i);
+                        insertStmt.setInt(2, salonId);
+                        insertStmt.setInt(3, etkinlikId);
+                        insertStmt.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Helper.Mesaj("Koltuklar oluşturulurken hata oluştu!");
+        }
+    }
     public Bilet_Satin_Alma() {
         add(biletAlPNL);
         setTitle("Bilet Satın Alma Sayfası");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1600, 900);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setSize(800, 800);
         setLocationRelativeTo(null);
-
-        etklnk_tur_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        etklnk_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        etnlk_trh_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        cmb_etkinlikTuru.setFont(new Font("Serif", Font.BOLD, 16));
-        cmb_etkinlikAdi.setFont(new Font("Serif", Font.BOLD, 16));
-
-        bilet_al_lbl.setFont(new Font("Serif", Font.BOLD, 20));
-        koltukSecButton.setFont(new Font("Serif", Font.BOLD, 16));
-        fld_etkinlikTarih.setFont(new Font("Serif", Font.BOLD, 16));
-        scli_koltuk_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        koltuk_no_lbl.setFont(new Font("Serif", Font.ITALIC, 15));
+//        setExtendedState(JFrame.MAXIMIZED_BOTH); // Pencereyi tam ekran yapar
+        etklnk_tur_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        cmb_etkinlikTuru.setFont(new Font("Serif", Font.BOLD, 14));
+        etklnk_ad_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        cmb_etkinlikAdi.setFont(new Font("Serif", Font.BOLD, 14));
+        etnlk_trh_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_etkinlikTarih.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_etkinlikTarih.setEditable(false);
+        bilet_al_lbl.setFont(new Font("Serif", Font.BOLD, 16));
+        biletAlButton.setFont(new Font("Serif", Font.BOLD, 14));
+        koltukSecButton.setFont(new Font("Serif", Font.BOLD, 14));
+        scli_koltuk_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        koltuk_no_lbl.setFont(new Font("Serif", Font.BOLD, 14));
         koltuk_no_lbl.setForeground(Color.lightGray);
-        biletAlButton.setFont(new Font("Serif", Font.BOLD, 16));
-        seans_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        cmb_seans.setFont(new Font("Serif", Font.BOLD, 16));
-        musteri_ad_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        fld_musteriAd.setFont(new Font("Serif", Font.BOLD, 16));
-        fiyat_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        Musteri_tel_lbl.setFont(new Font("Serif", Font.BOLD, 16));
-        fld_musteriTel.setFont(new Font("Serif", Font.BOLD, 16));
-        fld_salon.setFont(new Font("Serif",Font.BOLD,16));
-        etknlk_salon_lbl.setFont(new Font("Serif",Font.BOLD,16));
-
+        seans_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        cmb_seans.setFont(new Font("Serif", Font.BOLD, 14));
+        fiyat_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_fiyat.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_fiyat.setEditable(false);
+        Musteri_tel_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_musteriTel.setFont(new Font("Serif", Font.BOLD, 14));
+        musteri_ad_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_musteriAd.setFont(new Font("Serif", Font.BOLD, 14));
+        musteri_soyad_lbl.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_musteriSoyad.setFont(new Font("Serif", Font.BOLD, 14));
+        lbl_kasaNo.setFont(new Font("Serif", Font.BOLD, 14));
+        cmb_kasaNo.setFont(new Font("Serif", Font.BOLD, 14));
+        fld_salon.setFont(new Font("Serif",Font.BOLD,14));
+        etknlk_salon_lbl.setFont(new Font("Serif",Font.BOLD,14));
 
         cmb_etkinlikTuru.addItem("Tiyatro");
         cmb_etkinlikTuru.addItem("Sinema");
@@ -152,6 +206,7 @@ public class Bilet_Satin_Alma extends JFrame {
                             "etkinlikler.etkinlik_adi, " +
                             "etkinlikler.etkinlik_tarihi, " +
                             "etkinlikler.etkinlik_fiyati, " +
+                            "salonlar.salon_id, " +
                             "salonlar.salon_adi, " +
                             "salonlar.kapasite " +
                             "FROM etkinlikler " +
@@ -174,10 +229,12 @@ public class Bilet_Satin_Alma extends JFrame {
                                 fld_etkinlikTarih.setText(dbTarih); // hata durumunda orijinal formatı göster
                             }
 
-//                            fld_etkinlikTarih.setText(rs.getString("etkinlik_tarihi"));
                             fld_salon.setText(rs.getString("salon_adi"));
                             fld_fiyat.setText(String.valueOf(rs.getInt("etkinlik_fiyati")));
                             tempEtkinlikID = rs.getInt("etkinlik_id");
+
+                            int salonId = rs.getInt("salon_id");
+                            etkinlikSecildiginde(tempEtkinlikID,salonId);
                         }
                     } catch (SQLException ex) {
                         ex.printStackTrace();
@@ -260,12 +317,12 @@ public class Bilet_Satin_Alma extends JFrame {
                     return;
                 }
 
-//                if (secilenKoltukId == -1) {
-//                    JOptionPane.showMessageDialog(null,
-//                            "Lütfen bir koltuk seçiniz.",
-//                            "Hata", JOptionPane.ERROR_MESSAGE);
-//                    return;
-//                }
+                if (secilenKoltukId == -1) {
+                    JOptionPane.showMessageDialog(null,
+                            "Lütfen bir koltuk seçiniz.",
+                            "Hata", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 if (fld_musteriAd.getText().trim().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
@@ -297,6 +354,7 @@ public class Bilet_Satin_Alma extends JFrame {
                 panel.add(new JLabel("Müşteri Adı: " + musteriAdi));
                 panel.add(new JLabel("Telefon: " + musteriTel));
 
+
                 Bilet_Bilgi biletBilgiForm = new Bilet_Bilgi();
                 biletBilgiForm.setVisible(true);
 
@@ -321,6 +379,7 @@ public class Bilet_Satin_Alma extends JFrame {
                         );
                         if (biletKaydedildi){
                             Helper.Mesaj("Bilet başarıyla kaydedildi.");
+//                            temizle();
 
                             Bilet_Bilgi biletBilgi = new Bilet_Bilgi();
                             biletBilgi.setVisible(true);
@@ -330,11 +389,14 @@ public class Bilet_Satin_Alma extends JFrame {
                             biletBilgi.updateEtkinlikSeans((String) cmb_seans.getSelectedItem());
                             biletBilgi.updateEtkinlikMusteriAd(fld_musteriAd.getText().trim());
                             biletBilgi.updateEtkinlikMusteritel(fld_musteriTel.getText().trim());
-//                            biletBilgi.updateKoltukNo(koltuk_no_lbl.getText());
                         }
                     }
                 }catch (SQLException ex){
-                    Helper.Mesaj("Veritabanı hatası: "+ ex.getMessage());
+                    if (ex.getMessage().contains("kayıtlı müşteri zaten mevcut")) {
+                        Helper.Mesaj("Bu telefon numarası ile kayıtlı müşteri zaten mevcut. Lütfen farklı bir telefon numarası giriniz.");
+                    } else {
+                        Helper.Mesaj("Veritabanı hatası: " + ex.getMessage());
+                    }
                 }
             }
         });
@@ -357,6 +419,17 @@ public class Bilet_Satin_Alma extends JFrame {
     }
 
     private int musteriKaydet(String ad, String soyad, String telefon) throws SQLException{
+        // Önce telefon numarasının var olup olmadığını kontrol et
+        String checkQuery = "SELECT musteri_id FROM musteriler WHERE telefon = ?";
+        PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
+        checkStmt.setString(1, telefon);
+        ResultSet checkRs = checkStmt.executeQuery();
+
+        if (checkRs.next()) {
+            // Telefon numarası zaten kayıtlı, özel bir hata fırlat
+            throw new SQLException("Bu telefon numarası ile kayıtlı müşteri zaten mevcut!");
+        }
+
         String insertQuery = "INSERT INTO musteriler (ad, soyad, telefon) VALUES (?, ?, ?)";
         PreparedStatement psmt = conn.prepareStatement(insertQuery);
         psmt.setString(1, ad);

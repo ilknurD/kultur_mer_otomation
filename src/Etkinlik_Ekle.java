@@ -4,6 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Etkinlik_Ekle extends JFrame {
     private etkinlik Etkinlik;
@@ -36,17 +39,31 @@ public class Etkinlik_Ekle extends JFrame {
                 "WHERE etkinlik_id=?";
         this.conn = VeriTabaniBaglantisi.getConnection();
         try {
-            PreparedStatement pr = this.conn.prepareStatement(query);
+            // Veritabanından gelen tarihi almak
+            String gelenTarih = Etkinlik.getEtkinlik_tar(); // Etkinlik nesnesinde tarih zaten var
+            SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date tarih = null;
 
-            String tarih = Helper.TarihKontrol(Etkinlik.getEtkinlik_tar(), "dd/MM/yyyy");
-            if (tarih == null){
-                Helper.Mesaj("Geçerli bir tarih formatı giriniz");
+            try {
+                tarih = veritabaniFormat.parse(gelenTarih);  // Veritabanından gelen tarih
+            } catch (ParseException e) {
+                Helper.Mesaj("Tarih formatı hatalı! Doğru format: yyyy-MM-dd");
                 return false;
             }
-            String formattedDate = Helper.convertDateFormat(tarih); //Dönüştürdüm uygun formata
+
+            // Veritabanına uygun tarihi, dd/MM/yyyy formatına çeviriyoruz, bu formatta kullanıcıya göstereceğiz
+            SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String tarihKullaniciFormat = kullaniciFormat.format(tarih); // Kullanıcıya gösterilecek tarih formatı
+            Etkinlik.setEtkinlik_tar(tarihKullaniciFormat); // Kullanıcı formatında tarih gösterilecek
+
+            // Güncelleme işlemi için gelen tarihi veritabanına uygun forma döndürüp kaydediyoruz
+            SimpleDateFormat guncellemeFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String veritabaniTarihi = guncellemeFormat.format(tarih); // Veritabanı için uygun tarih formatı
+
+            PreparedStatement pr = this.conn.prepareStatement(query);
             pr.setString(1,Etkinlik.getEtkinlik_ad());
             pr.setString(2,Etkinlik.getEtkinlik_turu().toString());
-            pr.setString(3,formattedDate);
+            pr.setString(3,veritabaniTarihi);
             pr.setInt(4,Etkinlik.getSalon_id());
             pr.setInt(5,Etkinlik.getEtkinlikFiyat());
             pr.setInt(6,Etkinlik.getEtkinlikid());
@@ -62,6 +79,9 @@ public class Etkinlik_Ekle extends JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
             Helper.Mesaj("Güncelleme işlemi sırasında bir hata oluştu.");
+            return false;
+        } catch (Exception e) {
+            Helper.Mesaj("Beklenmeyen hata: " + e.getMessage());
             return false;
         }
     }
@@ -80,27 +100,47 @@ public class Etkinlik_Ekle extends JFrame {
         }
     }
 
-    public boolean etknlkkaydet (etkinlik Etkinlik){
-        String tarih = Helper.TarihKontrol(Etkinlik.getEtkinlik_tar(), "dd/MM/yyyy");
-        String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES ('"
-                + Etkinlik.getEtkinlik_ad() + "', '"
-                + Etkinlik.getEtkinlik_turu().toString() + "', '"
-                + tarih + "','"
-                + Etkinlik.getSalon_id() + "', '"
-                + Etkinlik.getEtkinlikFiyat() + "')";
+    public boolean etknlkkaydet(etkinlik Etkinlik) {
+        // Veritabanı bağlantısı nesnesi
         this.conn = VeriTabaniBaglantisi.getConnection();
+
         try {
+            // Önce kullanıcıdan alınan tarihi DD/MM/YYYY formatında parse ediyoruz
+            String fld_tarihi = Etkinlik.getEtkinlik_tar(); // Etkinlik nesnesindeki tarihi al
+            SimpleDateFormat girisFormati = new SimpleDateFormat("dd/MM/yyyy");
+            Date tarih = girisFormati.parse(fld_tarihi); // Tarihi parse et
+
+            // Ardından, tarihi veritabanına uygun olan YYYY-MM-DD formatına dönüştürüyoruz
+            SimpleDateFormat veritabaniFormati = new SimpleDateFormat("yyyy-MM-dd");
+            String veritabaniTarihi = veritabaniFormati.format(tarih); // Veritabanı için formatlanmış tarih
+
+            // SQL sorgusu
+            String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES ('"
+                    + Etkinlik.getEtkinlik_ad() + "', '"
+                    + Etkinlik.getEtkinlik_turu().toString() + "', '"
+                    + veritabaniTarihi + "', '"
+                    + Etkinlik.getSalon_id() + "', '"
+                    + Etkinlik.getEtkinlikFiyat() + "')";
+
+            // Veritabanına sorguyu gönderme
             Statement st = this.conn.createStatement();
             int result = st.executeUpdate(query);
             return result > 0;
+
         } catch (SQLException e) {
             Helper.Mesaj("Veri tabanı bağlantı hatası: " + e.getMessage());
             return false;
-        }catch (Exception e) {
-            Helper.Mesaj( "Beklenmeyen Hata: " + e.getMessage());
+
+        } catch (ParseException e) {
+            Helper.Mesaj("Tarih formatı hatası: " + e.getMessage());
+            return false;
+
+        } catch (Exception e) {
+            Helper.Mesaj("Beklenmeyen hata: " + e.getMessage());
             return false;
         }
     }
+
 
     public Etkinlik_Ekle(etkinlik Etkinlik) {
         add(pnl_etknlkEkleGuncelle);
