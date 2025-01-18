@@ -41,24 +41,17 @@ public class Etkinlik_Ekle extends JFrame {
         try {
             // Veritabanından gelen tarihi almak
             String gelenTarih = Etkinlik.getEtkinlik_tar(); // Etkinlik nesnesinde tarih zaten var
-            SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date tarih = null;
+            SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date tarih;
 
             try {
-                tarih = veritabaniFormat.parse(gelenTarih);  // Veritabanından gelen tarih
+                tarih = kullaniciFormat.parse(gelenTarih);  // Veritabanından gelen tarih
             } catch (ParseException e) {
-                Helper.Mesaj("Tarih formatı hatalı! Doğru format: yyyy-MM-dd");
                 return false;
             }
-
-            // Veritabanına uygun tarihi, dd/MM/yyyy formatına çeviriyoruz, bu formatta kullanıcıya göstereceğiz
-            SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String tarihKullaniciFormat = kullaniciFormat.format(tarih); // Kullanıcıya gösterilecek tarih formatı
-            Etkinlik.setEtkinlik_tar(tarihKullaniciFormat); // Kullanıcı formatında tarih gösterilecek
-
-            // Güncelleme işlemi için gelen tarihi veritabanına uygun forma döndürüp kaydediyoruz
-            SimpleDateFormat guncellemeFormat = new SimpleDateFormat("yyyy-MM-dd");
-            String veritabaniTarihi = guncellemeFormat.format(tarih); // Veritabanı için uygun tarih formatı
+            //Tarihi veritabanı formatına çevir (yyyy-MM-dd)
+            SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String veritabaniTarihi = veritabaniFormat.format(tarih);
 
             PreparedStatement pr = this.conn.prepareStatement(query);
             pr.setString(1,Etkinlik.getEtkinlik_ad());
@@ -108,38 +101,49 @@ public class Etkinlik_Ekle extends JFrame {
             // Önce kullanıcıdan alınan tarihi DD/MM/YYYY formatında parse ediyoruz
             String fld_tarihi = Etkinlik.getEtkinlik_tar(); // Etkinlik nesnesindeki tarihi al
             SimpleDateFormat girisFormati = new SimpleDateFormat("dd/MM/yyyy");
-            Date tarih = girisFormati.parse(fld_tarihi); // Tarihi parse et
+            girisFormati.setLenient(false); // Tarih doğruluğunu kontrol eder
+
+            Date tarih;
+            try {
+                tarih = girisFormati.parse(fld_tarihi); // Tarihi parse et
+            } catch (ParseException e) {
+                Helper.Mesaj("Tarih formatı hatalı. Lütfen 'dd/MM/yyyy' formatında bir tarih giriniz.");
+                return false;
+            }
 
             // Ardından, tarihi veritabanına uygun olan YYYY-MM-DD formatına dönüştürüyoruz
             SimpleDateFormat veritabaniFormati = new SimpleDateFormat("yyyy-MM-dd");
             String veritabaniTarihi = veritabaniFormati.format(tarih); // Veritabanı için formatlanmış tarih
 
-            // SQL sorgusu
-            String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES ('"
-                    + Etkinlik.getEtkinlik_ad() + "', '"
-                    + Etkinlik.getEtkinlik_turu().toString() + "', '"
-                    + veritabaniTarihi + "', '"
-                    + Etkinlik.getSalon_id() + "', '"
-                    + Etkinlik.getEtkinlikFiyat() + "')";
+            // SQL sorgusu ve verileri veritabanına güvenli şekilde yerleştirme
+            String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement pr = this.conn.prepareStatement(query);
+            pr.setString(1, Etkinlik.getEtkinlik_ad());  // Etkinlik adını ekle
+            pr.setString(2, Etkinlik.getEtkinlik_turu().toString());  // Etkinlik türünü ekle
+            pr.setString(3, veritabaniTarihi);  // Formatlanmış tarihi ekle
+            pr.setInt(4, Etkinlik.getSalon_id());  // Salon ID'sini ekle
+            pr.setInt(5, Etkinlik.getEtkinlikFiyat());  // Etkinlik fiyatını ekle
 
-            // Veritabanına sorguyu gönderme
-            Statement st = this.conn.createStatement();
-            int result = st.executeUpdate(query);
-            return result > 0;
+            // Sorguyu çalıştırma ve sonuç kontrolü
+            int result = pr.executeUpdate();
+            return result > 0;  // Eğer etkilenen satır sayısı sıfırdan büyükse işlem başarılı
 
         } catch (SQLException e) {
             Helper.Mesaj("Veri tabanı bağlantı hatası: " + e.getMessage());
             return false;
 
-        } catch (ParseException e) {
-            Helper.Mesaj("Tarih formatı hatası: " + e.getMessage());
-            return false;
-
         } catch (Exception e) {
             Helper.Mesaj("Beklenmeyen hata: " + e.getMessage());
             return false;
+        } finally {
+            try {
+                if (this.conn != null) this.conn.close();  // Bağlantıyı kapatmayı unutmayın
+            } catch (SQLException e) {
+                Helper.Mesaj("Veri tabanı bağlantısı kapatılamadı: " + e.getMessage());
+            }
         }
     }
+
 
 
     public Etkinlik_Ekle(etkinlik Etkinlik) {
@@ -173,6 +177,25 @@ public class Etkinlik_Ekle extends JFrame {
         cmb_salon.addItem(3);
         cmb_salon.addItem(4);
         cmb_salon.addItem(5);
+
+        if (this.Etkinlik.getEtkinlikid() != 0) {
+            this.lbl_baslik.setText("Etkinlik Düzenle");
+            this.fld_adi.setText(this.Etkinlik.getEtkinlik_ad());
+            this.fld_fiyat.setText(String.valueOf(this.Etkinlik.getEtkinlikFiyat()));
+
+            // Veritabanı formatından kullanıcı formatına çevir
+            try {
+                SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date tarih = veritabaniFormat.parse(this.Etkinlik.getEtkinlik_tar());
+                SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
+                this.fld_tarihi.setText(kullaniciFormat.format(tarih));
+            } catch (ParseException e) {
+                Helper.Mesaj("Tarih dönüştürme hatası!");
+            }
+
+            this.cmb_tur.getModel().setSelectedItem(this.Etkinlik.getEtkinlik_turu());
+            this.cmb_salon.getModel().setSelectedItem(this.Etkinlik.getSalon_id());
+        }
 
         if (this.Etkinlik.getEtkinlikid() == 0) {
             this.lbl_baslik.setText("Etkinlik Ekle");

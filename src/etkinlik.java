@@ -2,7 +2,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class etkinlik {
     private int etkinlikid;
@@ -119,7 +122,26 @@ public class etkinlik {
         Etkinlik.setEtkinlikid(rs.getInt("etkinlik_id"));
         Etkinlik.setEtkinlik_ad(rs.getString("etkinlik_adi"));
         Etkinlik.setEtkinlik_turu(etkinlik.TYPE.valueOf(rs.getString("etkinlik_turu")));
-        Etkinlik.setEtkinlik_tar(rs.getString("etkinlik_tarihi"));
+
+        // Veritabanından gelen tarih
+        String veritabaniTarihi = rs.getString("etkinlik_tarihi");
+
+        // Tarih dönüşüm işlemi
+        try {
+            // Veritabanındaki format: yyyy-MM-dd
+            SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date tarih = veritabaniFormat.parse(veritabaniTarihi); // Veritabanından gelen tarihi Date nesnesine çevir
+
+            // Kullanıcıya uygun format: dd/MM/yyyy
+            SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String kullaniciTarihi = kullaniciFormat.format(tarih); // Kullanıcı formatında tarih
+
+            Etkinlik.setEtkinlik_tar(kullaniciTarihi); // Kullanıcıya uygun formatta tarihi ayarla
+        } catch (ParseException e) {
+            // Hata durumunda orijinal tarihi kullan
+            Etkinlik.setEtkinlik_tar(veritabaniTarihi);
+        }
+
         Etkinlik.setSalon_id(rs.getInt("salon_id"));
         Etkinlik.setEtkinlikFiyat(rs.getInt("etkinlik_fiyati"));
         return Etkinlik;

@@ -4,6 +4,8 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -393,15 +395,27 @@ public class Mudur_islem extends JFrame {
         Object[] columnEtkinlikler = {"ID", "Etkinlik Türü", "Etkinlik Adı", "Etkinlik Tarihi", "Salon", "Fiyat"};
         this.mdl_etkinlikler_t.setColumnIdentifiers(columnEtkinlikler); //modelin başlıklarını üstte belirlediklerim olsun
         for (etkinlik Etkinlik : etkinlikler) {
+            // Tarih dönüştürme işlemi
+            String tarihGorunum = Etkinlik.getEtkinlik_tar(); // Varsayılan olarak veritabanından gelen tarih
+            try {
+                SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
+                Date tarih = (Date) veritabaniFormat.parse(Etkinlik.getEtkinlik_tar());
+                SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
+                tarihGorunum = kullaniciFormat.format(tarih);
+            } catch (ParseException e) {
+                System.out.println("Tarih dönüştürme hatası: " + e.getMessage());
+                // Hata durumunda orijinal tarihi kullan
+            }
+
             Object[] rowObject = {
                     Etkinlik.getEtkinlikid(),
                     Etkinlik.getEtkinlik_turu(),
                     Etkinlik.getEtkinlik_ad(),
-                    Etkinlik.getEtkinlik_tar(),
+                    tarihGorunum, // Dönüştürülmüş tarihi kullan
                     Etkinlik.getSalon_id(),
                     Etkinlik.getEtkinlikFiyat()
             };
-            this.mdl_etkinlikler_t.addRow(rowObject); //verileri atmış olduk
+            this.mdl_etkinlikler_t.addRow(rowObject);
         }
 
         this.tbl_etkinlikler.setModel(this.mdl_etkinlikler_t);
