@@ -45,7 +45,6 @@ public class Bilet_Satin_Alma extends JFrame {
     private int secilenKoltukId = -1;
 
     public void temizle() {
-        cmb_etkinlikTuru.removeAllItems();
         cmb_etkinlikAdi.removeAllItems();
         fld_etkinlikTarih.setText("");
         cmb_seans.setSelectedIndex(-1);
@@ -156,6 +155,7 @@ public class Bilet_Satin_Alma extends JFrame {
         lbl_kasaNo.setFont(new Font("Serif", Font.BOLD, 14));
         cmb_kasaNo.setFont(new Font("Serif", Font.BOLD, 14));
         fld_salon.setFont(new Font("Serif",Font.BOLD,14));
+        fld_salon.setEditable(false);
         etknlk_salon_lbl.setFont(new Font("Serif",Font.BOLD,14));
 
         cmb_etkinlikTuru.addItem("Tiyatro");
@@ -338,6 +338,13 @@ public class Bilet_Satin_Alma extends JFrame {
                     return;
                 }
 
+                if (!fld_musteriTel.getText().matches("\\d{11}")){
+                    JOptionPane.showMessageDialog(null,
+                            "Lütfen 11 haneli telefon numaranızı giriniz.",
+                            "Hata", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 String etkinlikTuru = (String) cmb_etkinlikTuru.getSelectedItem();
                 String etkinlikAdi = (String) cmb_etkinlikAdi.getSelectedItem();
                 String seans = (String) cmb_seans.getSelectedItem();
@@ -379,7 +386,7 @@ public class Bilet_Satin_Alma extends JFrame {
                         );
                         if (biletKaydedildi){
                             Helper.Mesaj("Bilet başarıyla kaydedildi.");
-//                            temizle();
+                            temizle();
 
                             Bilet_Bilgi biletBilgi = new Bilet_Bilgi();
                             biletBilgi.setVisible(true);
@@ -488,10 +495,21 @@ public class Bilet_Satin_Alma extends JFrame {
             psmt.setString(9, fld_musteriTel.getText().trim());
 
             int etkilenenSatirlar = psmt.executeUpdate();
+
+            String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU' WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                updateStmt.setInt(1, Integer.parseInt(koltuk_no_lbl.getText()));
+                updateStmt.setInt(2, etkinlikId);
+                updateStmt.setInt(3, salonId);
+                updateStmt.executeUpdate();
+            }
             return etkilenenSatirlar > 0;
 
         } catch (ParseException ex) {
             throw new SQLException("Tarih formatı dönüştürülemedi: " + ex.getMessage());
         }
+
+
+
     }
 }

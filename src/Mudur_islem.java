@@ -399,12 +399,23 @@ public class Mudur_islem extends JFrame {
             String tarihGorunum = Etkinlik.getEtkinlik_tar(); // Varsayılan olarak veritabanından gelen tarih
             try {
                 SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date tarih = (Date) veritabaniFormat.parse(Etkinlik.getEtkinlik_tar());
                 SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
-                tarihGorunum = kullaniciFormat.format(tarih);
-            } catch (ParseException e) {
-                System.out.println("Tarih dönüştürme hatası: " + e.getMessage());
-                // Hata durumunda orijinal tarihi kullan
+
+                // Tarihi uygun formata dönüştür
+                String veritabaniTarih = Etkinlik.getEtkinlik_tar();
+
+                if (veritabaniTarih.contains("/")) {
+                    veritabaniTarih = veritabaniTarih.replace("/", "-");
+                }
+
+                /// Önce java.sql.Date'e çevir
+                java.sql.Date sqlDate = java.sql.Date.valueOf(veritabaniTarih);
+                // Sonra istenen formata dönüştür
+                tarihGorunum = kullaniciFormat.format(sqlDate);
+
+            } catch (IllegalArgumentException e) {
+//                System.out.println("Tarih dönüştürme hatası: " + e.getMessage());
+//                // Hata durumunda orijinal tarihi kullan
             }
 
             Object[] rowObject = {

@@ -182,17 +182,6 @@ public class Etkinlik_Ekle extends JFrame {
             this.lbl_baslik.setText("Etkinlik Düzenle");
             this.fld_adi.setText(this.Etkinlik.getEtkinlik_ad());
             this.fld_fiyat.setText(String.valueOf(this.Etkinlik.getEtkinlikFiyat()));
-
-            // Veritabanı formatından kullanıcı formatına çevir
-            try {
-                SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date tarih = veritabaniFormat.parse(this.Etkinlik.getEtkinlik_tar());
-                SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
-                this.fld_tarihi.setText(kullaniciFormat.format(tarih));
-            } catch (ParseException e) {
-                Helper.Mesaj("Tarih dönüştürme hatası!");
-            }
-
             this.cmb_tur.getModel().setSelectedItem(this.Etkinlik.getEtkinlik_turu());
             this.cmb_salon.getModel().setSelectedItem(this.Etkinlik.getSalon_id());
         }

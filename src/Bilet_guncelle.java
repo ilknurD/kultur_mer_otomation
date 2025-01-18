@@ -117,9 +117,6 @@ public class Bilet_guncelle extends JFrame {
 
     }
 
-
-
-
     private void yukleGuncelBilgiler(int biletId) {
         try {
             // Önce bilet bilgilerini al
@@ -127,11 +124,12 @@ public class Bilet_guncelle extends JFrame {
                     "b.bilet_id, b.etkinlik_id, b.musteri_id, b.koltuk_id, b.fiyat, b.tarih, b.seans, " +
                     "m.musteri_id, m.ad as musteri_ad, m.soyad as musteri_soyad, m.telefon, " +
                     "e.etkinlik_id, e.etkinlik_adi, e.etkinlik_turu, e.etkinlik_tarihi, e.etkinlik_fiyati, " +
-                    "s.salon_id, s.salon_adi " +
+                    "s.salon_id, s.salon_adi, o.koltuk_no " +
                     "FROM biletler b " +
                     "INNER JOIN musteriler m ON b.musteri_id = m.musteri_id " +
                     "INNER JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
                     "INNER JOIN salonlar s ON e.salon_id = s.salon_id " +
+                    "INNER JOIN koltuklar o ON b.koltuk_id = o.koltuk_id "+
                     "WHERE b.bilet_id = ?";
 
             PreparedStatement pstmt = conn.prepareStatement(sqlBiletDetay);
@@ -159,7 +157,7 @@ public class Bilet_guncelle extends JFrame {
                 fld_B_seans.setEditable(false);
                 fld_MusteriAdSoyad.setText(rs.getString("musteri_ad") + " " + rs.getString("musteri_soyad"));
                 fld_musteriTel.setText(rs.getString("telefon"));
-                fld_koltukNo.setText(rs.getString("koltuk_id"));
+                fld_koltukNo.setText(rs.getString("koltuk_no"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

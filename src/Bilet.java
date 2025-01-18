@@ -213,11 +213,12 @@ public class Bilet {
 
     public ArrayList<Bilet> biletListele() {
         String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_adi, e.etkinlik_turu, e.etkinlik_tarihi, b.seans, " +
-                "s.salon_adi, b.koltuk_id, e.etkinlik_fiyati, b.tarih, k.kasiyer_kasaNo " +
+                "s.salon_adi, b.koltuk_id, e.etkinlik_fiyati, b.tarih, k.kasiyer_kasaNo, o.koltuk_no " +
                 "FROM biletler b " +
                 "INNER JOIN musteriler m ON b.musteri_id = m.musteri_id " +
                 "INNER JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
                 "INNER JOIN salonlar s ON b.salon_id = s.salon_id " +
+                "INNER JOIN koltuklar o ON b.koltuk_id = o.koltuk_id " +
                 "INNER JOIN kasiyerler k ON b.kasaNo = k.kasiyer_kasaNo";
 
 
@@ -250,7 +251,7 @@ public class Bilet {
         karsilastirBilet.setMusteriTelefon(RS.getString("telefon"));
         karsilastirBilet.setTarih(RS.getString("tarih")); // String'e çevirmeye gerek yok
         karsilastirBilet.setSalonAdi(RS.getString("salon_adi"));
-        karsilastirBilet.setKoltukNo(RS.getInt("koltuk_id"));
+        karsilastirBilet.setKoltukNo(RS.getInt("koltuk_no"));
         karsilastirBilet.setFiyat(RS.getInt("etkinlik_fiyati"));
         karsilastirBilet.setKasaNo(RS.getInt("kasiyer_kasaNo"));
 

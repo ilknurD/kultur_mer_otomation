@@ -119,16 +119,6 @@ public class KoltukSecimi extends JFrame {
                     return;
                 }
             }
-
-            String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU' WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
-            try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-                updateStmt.setInt(1, Integer.parseInt(secilenKoltuk));
-                updateStmt.setInt(2, etkinlik.getEtkinlikid());
-                updateStmt.setInt(3, etkinlik.getSalon_id());
-                updateStmt.executeUpdate();
-            }
-
-            conn.commit();
             JOptionPane.showMessageDialog(this, "Koltuk başarıyla seçildi: " + secilenKoltuk);
 
             if (listener != null) {
