@@ -74,38 +74,48 @@ public class Bilet_guncelle extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // Koltuk numarası kontrolü
-                    if (fld_koltukNo.getText().trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Koltuk numarası boş olamaz!");
-                        return;
-                    }
+                    // 1. Musteriler tablosunda müşteri ad ve soyadını güncelle
+                    String sqlMusteriGuncelle = "UPDATE musteriler SET ad = ?, soyad = ?, telefon = ?  WHERE telefon = ?";
 
-                    // Koltuk müsaitlik kontrolü
-                    String sqlKoltukKontrol = "SELECT bilet_id FROM biletler WHERE koltuk_id = ? AND etkinlik_id = ? AND bilet_id != ?";
-                    PreparedStatement pstmtKoltuk = conn.prepareStatement(sqlKoltukKontrol);
-                    pstmtKoltuk.setString(1, fld_koltukNo.getText().trim());
-                    pstmtKoltuk.setInt(2, mevcutBilet.getEtkinlikId());
-                    pstmtKoltuk.setInt(3, mevcutBilet.getBiletId());
-                    ResultSet rsKoltuk = pstmtKoltuk.executeQuery();
+                    // 2. Biletler tablosunda müşteri ad-soyadını güncelle
+                    String sqlBiletGuncelle = "UPDATE biletler SET musteriTel = ? WHERE bilet_id = ?";
 
-                    if (rsKoltuk.next()) {
-                        JOptionPane.showMessageDialog(null, "Seçilen koltuk dolu! Lütfen başka bir koltuk seçiniz.");
-                        return;
-                    }
+                    try (PreparedStatement pstmtMusteriGuncelle = conn.prepareStatement(sqlMusteriGuncelle);
+                         PreparedStatement pstmtBiletGuncelle = conn.prepareStatement(sqlBiletGuncelle)) {
 
-                    // Bileti güncelle
-                    String sqlGuncelle = "UPDATE biletler SET koltuk_id = ? WHERE bilet_id = ?";
-                    PreparedStatement pstmtGuncelle = conn.prepareStatement(sqlGuncelle);
-                    pstmtGuncelle.setString(1, fld_koltukNo.getText().trim());
-                    pstmtGuncelle.setInt(2, mevcutBilet.getBiletId());
+                        String tamAdSoyad = fld_MusteriAdSoyad.getText().trim();
+                        String[] adSoyad = tamAdSoyad.split(" ", 2);  // İlk boşluktan itibaren iki kısmı ayırır
 
-                    int affectedRows = pstmtGuncelle.executeUpdate();
+                        String ad = adSoyad[0];  // İlk kısım Ad
+                        String soyad = (adSoyad.length > 1) ? adSoyad[1] : "";  // İkinci kısım Soyad
 
-                    if (affectedRows > 0) {
-                        JOptionPane.showMessageDialog(null, "Bilet başarıyla güncellendi!");
-                        dispose(); // Pencereyi kapat
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Güncelleme işlemi başarısız oldu!");
+                        // Telefon numarasını alıyoruz
+                        String telefonNumarasi = fld_musteriTel.getText().trim();
+                        String eskiTelefonNumarasi = mevcutBilet.getMusteriTelefon();  // Eski telefon numarasını al
+
+                        // 1. Musteriler tablosunda müşteri ad ve soyadını ve telefonunu güncelle
+                        pstmtMusteriGuncelle.setString(1, ad);
+                        pstmtMusteriGuncelle.setString(2, soyad);
+                        pstmtMusteriGuncelle.setString(3, telefonNumarasi);  // Yeni telefon numarasını gönderiyoruz
+                        pstmtMusteriGuncelle.setString(4, eskiTelefonNumarasi);  // Eski telefon numarasını WHERE koşulunda kullanıyoruz
+
+                        // 2. Biletler tablosunda müşteri ad-soyadını ve telefon numarasını güncelle
+                        String yeniAdSoyad = ad + " " + soyad; // Ad ve soyadı birleştir
+                        pstmtBiletGuncelle.setString(1, telefonNumarasi);  // Yeni telefon numarasını biletler tablosunda güncelliyoruz
+                        pstmtBiletGuncelle.setInt(2, mevcutBilet.getBiletId());
+
+                        // Musteriler tablosunda güncelleme işlemi
+                        int affectedRowsMusteri = pstmtMusteriGuncelle.executeUpdate();
+
+                        // Biletler tablosunda güncelleme işlemi
+                        int affectedRowsBilet = pstmtBiletGuncelle.executeUpdate();
+
+                        if (affectedRowsMusteri > 0 && affectedRowsBilet > 0) {
+                            JOptionPane.showMessageDialog(null, "Müşteri ve bilet bilgileri başarıyla güncellendi!");
+                            dispose();  // Formu kapat
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Güncelleme işlemi başarısız oldu!");
+                        }
                     }
 
                 } catch (SQLException ex) {
@@ -114,6 +124,8 @@ public class Bilet_guncelle extends JFrame {
                 }
             }
         });
+
+
 
     }
 
@@ -158,6 +170,7 @@ public class Bilet_guncelle extends JFrame {
                 fld_MusteriAdSoyad.setText(rs.getString("musteri_ad") + " " + rs.getString("musteri_soyad"));
                 fld_musteriTel.setText(rs.getString("telefon"));
                 fld_koltukNo.setText(rs.getString("koltuk_no"));
+                fld_koltukNo.setEditable(false);
             }
         } catch (SQLException e) {
             e.printStackTrace();

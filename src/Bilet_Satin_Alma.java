@@ -1,3 +1,5 @@
+import com.mysql.cj.protocol.Resultset;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -458,12 +460,10 @@ public class Bilet_Satin_Alma extends JFrame {
 
     private boolean biletKaydet(int etkinlikId, int musteriId, int kasaNo, int koltukId,
                                 String seans, int fiyat, String tarih) throws SQLException {
-
         String salonQuery = "SELECT salon_id FROM salonlar WHERE salon_adi = ?";
         PreparedStatement salonStmt = conn.prepareStatement(salonQuery);
         salonStmt.setString(1, fld_salon.getText().trim());
         ResultSet salonRs = salonStmt.executeQuery();
-
         int salonId;
         if (salonRs.next()) {
             salonId = salonRs.getInt("salon_id");
@@ -471,6 +471,7 @@ public class Bilet_Satin_Alma extends JFrame {
             throw new SQLException("Salon bulunamadı!");
         }
 
+        // Bilet ekleme sorgusu
         String query = "INSERT INTO biletler (etkinlik_id, musteri_id, kasaNo, koltuk_id, seans, fiyat, tarih, salon_id, musteriTel) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -483,7 +484,8 @@ public class Bilet_Satin_Alma extends JFrame {
             // Veritabanı formatına çevir
             String dbTarih = dbFormat.format(date);
 
-            PreparedStatement psmt = conn.prepareStatement(query);
+            // Bilet kaydı oluştur ve bilet_id'yi al
+            PreparedStatement psmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             psmt.setInt(1, etkinlikId);
             psmt.setInt(2, musteriId);
             psmt.setInt(3, kasaNo);
@@ -496,20 +498,29 @@ public class Bilet_Satin_Alma extends JFrame {
 
             int etkilenenSatirlar = psmt.executeUpdate();
 
-            String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU' WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
+            // Üretilen bilet_id'yi al
+            ResultSet generatedKeys = psmt.getGeneratedKeys();
+            int biletId = -1;
+            if (generatedKeys.next()) {
+                biletId = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Bilet ID alınamadı!");
+            }
+
+            // Koltuk tablosunu güncelle
+            String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU', bilet_id = ? WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
             try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-                updateStmt.setInt(1, Integer.parseInt(koltuk_no_lbl.getText()));
-                updateStmt.setInt(2, etkinlikId);
-                updateStmt.setInt(3, salonId);
+                updateStmt.setInt(1, biletId); // Bilet ID
+                updateStmt.setInt(2, koltukId); // Koltuk No
+                updateStmt.setInt(3, etkinlikId); // Etkinlik ID
+                updateStmt.setInt(4, salonId); // Salon ID
                 updateStmt.executeUpdate();
             }
-            return etkilenenSatirlar > 0;
 
+            return etkilenenSatirlar > 0;
         } catch (ParseException ex) {
             throw new SQLException("Tarih formatı dönüştürülemedi: " + ex.getMessage());
         }
-
-
-
     }
+
 }

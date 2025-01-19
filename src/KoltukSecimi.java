@@ -96,46 +96,71 @@ public class KoltukSecimi extends JFrame {
         koltuklar[row][col].setBackground(Color.YELLOW);
     }
 
-    private void handleOnaylaButton() {
-        if (secilenKoltuk == null) {
-            JOptionPane.showMessageDialog(this, "Lütfen bir koltuk seçin.");
-            return;
-        }
+        private void handleOnaylaButton() {
+            if (secilenKoltuk == null) {
+                JOptionPane.showMessageDialog(this, "Lütfen bir koltuk seçin.");
+                return;
+            }
 
-        try {
-            conn.setAutoCommit(false);
+            Connection conn = null;
+            try {
+                conn = VeriTabaniBaglantisi.getConnection();
+                conn.setAutoCommit(false);
 
-            String checkQuery = "SELECT bilet_durumu FROM koltuklar WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
-            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
-                checkStmt.setInt(1, Integer.parseInt(secilenKoltuk));
-                checkStmt.setInt(2, etkinlik.getEtkinlikid());
-                checkStmt.setInt(3, etkinlik.getSalon_id());
-                ResultSet rs = checkStmt.executeQuery();
+                // Koltuk durumunu kontrol et
+                String checkQuery = "SELECT bilet_durumu FROM koltuklar WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
+                try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                    checkStmt.setInt(1, Integer.parseInt(secilenKoltuk));
+                    checkStmt.setInt(2, etkinlik.getEtkinlikid());
+                    checkStmt.setInt(3, etkinlik.getSalon_id());
+                    ResultSet rs = checkStmt.executeQuery();
 
-                if (rs.next() && "DOLU".equals(rs.getString("bilet_durumu"))) {
-                    conn.rollback();
-                    JOptionPane.showMessageDialog(this, "Seçilen koltuk başka bir kullanıcı tarafından alınmış!");
-                    refreshKoltuklar();
-                    return;
+                    if (rs.next() && "DOLU".equals(rs.getString("bilet_durumu"))) {
+                        conn.rollback();
+                        JOptionPane.showMessageDialog(this, "Seçilen koltuk başka bir kullanıcı tarafından alınmış!");
+                        refreshKoltuklar();
+                        return;
+                    }
+                }
+
+                // Koltuğu DOLU olarak işaretle
+                String updateQuery = "UPDATE koltuklar SET bilet_durumu = 'DOLU' " +
+                        "WHERE koltuk_no = ? AND etkinlik_id = ? AND salon_id = ?";
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                    updateStmt.setInt(1, Integer.parseInt(secilenKoltuk));
+                    updateStmt.setInt(2, etkinlik.getEtkinlikid());
+                    updateStmt.setInt(3, etkinlik.getSalon_id());
+                    updateStmt.executeUpdate();
+                }
+
+                conn.commit();
+                JOptionPane.showMessageDialog(this, "Koltuk başarıyla seçildi: " + secilenKoltuk);
+
+                if (listener != null) {
+                    listener.koltukSecildi(secilenKoltuk);
+                }
+                dispose();
+
+            } catch (SQLException ex) {
+                if (conn != null) {
+                    try {
+                        conn.rollback();
+                    } catch (SQLException rollbackEx) {
+                        rollbackEx.printStackTrace();
+                    }
+                }
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "İşlem sırasında bir hata oluştu!");
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            JOptionPane.showMessageDialog(this, "Koltuk başarıyla seçildi: " + secilenKoltuk);
-
-            if (listener != null) {
-                listener.koltukSecildi(secilenKoltuk);
-            }
-            dispose();
-
-        } catch (SQLException ex) {
-            try {
-                conn.rollback();
-            } catch (SQLException rollbackEx) {
-                rollbackEx.printStackTrace();
-            }
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "İşlem sırasında bir hata oluştu!");
         }
-    }
 
     private void refreshKoltuklar() {
         doluKoltuklar = getDoluKoltuklar();
