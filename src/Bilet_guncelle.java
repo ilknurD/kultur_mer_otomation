@@ -74,10 +74,7 @@ public class Bilet_guncelle extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // 1. Musteriler tablosunda müşteri ad ve soyadını güncelle
                     String sqlMusteriGuncelle = "UPDATE musteriler SET ad = ?, soyad = ?, telefon = ?  WHERE telefon = ?";
-
-                    // 2. Biletler tablosunda müşteri ad-soyadını güncelle
                     String sqlBiletGuncelle = "UPDATE biletler SET musteriTel = ? WHERE bilet_id = ?";
 
                     try (PreparedStatement pstmtMusteriGuncelle = conn.prepareStatement(sqlMusteriGuncelle);
@@ -155,12 +152,18 @@ public class Bilet_guncelle extends JFrame {
 
                 fld_EtkinlikAdi.setText(rs.getString("etkinlik_adi"));
                 fld_EtkinlikAdi.setEditable(false);  // Düzenlenemez yap
-                fld_B_etkinlikTarih.setText(rs.getString("etkinlik_tarihi"));
+
+                String etkinlikTarih = rs.getString("etkinlik_tarihi");
+                fld_B_etkinlikTarih.setText(Bilet.formatTarih(etkinlikTarih));
                 fld_B_etkinlikTarih.setEditable(false);
+
                 fld_EtkinlikTuru.setText(rs.getString("etkinlik_turu"));
                 fld_EtkinlikTuru.setEditable(false);
-                fld_SatisTarihi.setText(rs.getString("tarih"));
+
+                String satisTarih = rs.getString("tarih");
+                fld_SatisTarihi.setText(Bilet.formatTarih(satisTarih));
                 fld_SatisTarihi.setEditable(false);
+
                 fld_Salon.setText(rs.getString("salon_adi"));
                 fld_Salon.setEditable(false);
                 fld_Fiyat.setText(rs.getString("etkinlik_fiyati"));

@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
@@ -244,12 +245,20 @@ public class Bilet {
         karsilastirBilet.setBiletId(RS.getInt("bilet_id"));
         karsilastirBilet.setEtkinlikTuru(RS.getString("etkinlik_turu"));
         karsilastirBilet.setEtkinlikAdi(RS.getString("etkinlik_adi"));
-        karsilastirBilet.setEtkinlikTarih(RS.getString("etkinlik_tarihi"));
+
+        // Etkinlik tarihi
+        String etkinlikTarih = RS.getString("etkinlik_tarihi");
+        karsilastirBilet.setEtkinlikTarih(formatTarih(etkinlikTarih));
+
         karsilastirBilet.setSeans(RS.getString("seans"));
         karsilastirBilet.setMusteriAdi(RS.getString("ad"));
         karsilastirBilet.setMusteriSoyad(RS.getString("soyad"));
         karsilastirBilet.setMusteriTelefon(RS.getString("telefon"));
-        karsilastirBilet.setTarih(RS.getString("tarih")); // String'e çevirmeye gerek yok
+
+        // Satış tarihi
+        String satisTarih = RS.getString("tarih");
+        karsilastirBilet.setTarih(formatTarih(satisTarih));
+
         karsilastirBilet.setSalonAdi(RS.getString("salon_adi"));
         karsilastirBilet.setKoltukNo(RS.getInt("koltuk_no"));
         karsilastirBilet.setFiyat(RS.getInt("etkinlik_fiyati"));
@@ -258,10 +267,20 @@ public class Bilet {
         return karsilastirBilet;
     }
 
+    public static String formatTarih(String veritabaniTarihi) {
+        try {
+            return new SimpleDateFormat("dd/MM/yyyy")
+                    .format(new SimpleDateFormat("yyyy-MM-dd").parse(veritabaniTarihi));
+        } catch (Exception e) {
+            return veritabaniTarihi; // Hata olursa orijinal tarihi döndür
+        }
+    }
+
+
     public Bilet getBiletById(int id) {
         Bilet bilet = null;
         String query = "SELECT b.bilet_id, m.ad, m.soyad, m.telefon, e.etkinlik_turu, e.etkinlik_adi, e.etkinlik_tarihi, b.seans, " +
-                "s.salon_adi, e.etkinlik_fiyati, b.koltuk_id, o.koltuk_no, b.salon_id, b.tarih, k.kasiyer_kasaNo " +
+                "s.salon_adi, e.etkinlik_fiyati, b.koltuk_id, o.koltuk_no, b.salon_id, b.tarih, k.kasiyer_kasaNo, o.koltuk_no  " +
                 "FROM biletler b " +
                 "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +
                 "LEFT JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +

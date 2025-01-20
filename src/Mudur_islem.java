@@ -102,6 +102,7 @@ public class Mudur_islem extends JFrame {
                 "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +
                 "LEFT JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
                 "LEFT JOIN salonlar s ON b.salon_id = s.salon_id " +
+                "LEFT JOIN koltuklar o ON b.koltuk_id = o.koltuk_id " +
                 "LEFT JOIN kasiyerler k ON b.kasaNo = k.kasiyer_kasaNo");
 
         ArrayList<String> kosullar = new ArrayList<>();
@@ -450,17 +451,44 @@ public class Mudur_islem extends JFrame {
             biletler = this.bilet.biletListele();
         }
 
+        SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
+
         for (Bilet bilet : biletler) {
+            // Etkinlik tarihini dönüştürme
+            String etkinlikTarihGorunum = bilet.getEtkinlikTarih();
+            try {
+                if (etkinlikTarihGorunum.contains("/")) {
+                    etkinlikTarihGorunum = etkinlikTarihGorunum.replace("/", "-");
+                }
+                java.sql.Date sqlEtkinlikTarih = java.sql.Date.valueOf(etkinlikTarihGorunum);
+                etkinlikTarihGorunum = kullaniciFormat.format(sqlEtkinlikTarih);
+            } catch (IllegalArgumentException e) {
+                // Hata durumunda orijinal tarihi kullan
+            }
+
+            // Satılma tarihini dönüştürme
+            String satilmaTarihiGorunum = bilet.getTarih();
+            try {
+                if (satilmaTarihiGorunum.contains("/")) {
+                    satilmaTarihiGorunum = satilmaTarihiGorunum.replace("/", "-");
+                }
+                java.sql.Date sqlSatilmaTarihi = java.sql.Date.valueOf(satilmaTarihiGorunum);
+                satilmaTarihiGorunum = kullaniciFormat.format(sqlSatilmaTarihi);
+            } catch (IllegalArgumentException e) {
+                // Hata durumunda orijinal tarihi kullan
+            }
+
             Object[] row = new Object[]{
                     bilet.getBiletId(),
                     bilet.getEtkinlikTuru(),
                     bilet.getEtkinlikAdi(),
-                    bilet.getEtkinlikTarih(),
+                    etkinlikTarihGorunum,
                     bilet.getSeans(),
                     bilet.getMusteriAdi(),
                     bilet.getMusteriSoyad(),
                     bilet.getMusteriTelefon(),
-                    bilet.getTarih(),
+                    satilmaTarihiGorunum,
                     bilet.getSalonAdi(),
                     bilet.getKoltukNo(),
                     bilet.getKasaNo(),

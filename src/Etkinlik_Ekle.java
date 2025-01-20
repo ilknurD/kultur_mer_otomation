@@ -115,14 +115,13 @@ public class Etkinlik_Ekle extends JFrame {
             SimpleDateFormat veritabaniFormati = new SimpleDateFormat("yyyy-MM-dd");
             String veritabaniTarihi = veritabaniFormati.format(tarih); // Veritabanı için formatlanmış tarih
 
-            // SQL sorgusu ve verileri veritabanına güvenli şekilde yerleştirme
             String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pr = this.conn.prepareStatement(query);
-            pr.setString(1, Etkinlik.getEtkinlik_ad());  // Etkinlik adını ekle
-            pr.setString(2, Etkinlik.getEtkinlik_turu().toString());  // Etkinlik türünü ekle
+            pr.setString(1, Etkinlik.getEtkinlik_ad());
+            pr.setString(2, Etkinlik.getEtkinlik_turu().toString());
             pr.setString(3, veritabaniTarihi);  // Formatlanmış tarihi ekle
-            pr.setInt(4, Etkinlik.getSalon_id());  // Salon ID'sini ekle
-            pr.setInt(5, Etkinlik.getEtkinlikFiyat());  // Etkinlik fiyatını ekle
+            pr.setInt(4, Etkinlik.getSalon_id());
+            pr.setInt(5, Etkinlik.getEtkinlikFiyat());
 
             // Sorguyu çalıştırma ve sonuç kontrolü
             int result = pr.executeUpdate();
