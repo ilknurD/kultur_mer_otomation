@@ -48,14 +48,6 @@
           <text value="Seans Saati : "/>
         </properties>
       </component>
-      <component id="9b8e8" class="javax.swing.JLabel" binding="blt_etkinlik_koltuk_lbl">
-        <constraints>
-          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Seçilen Koltuk No : "/>
-        </properties>
-      </component>
       <component id="b94f" class="javax.swing.JLabel" binding="blt_etkinlik_tur_sonuc_lbl">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -88,14 +80,6 @@
           <text value="Sonuç"/>
         </properties>
       </component>
-      <component id="a7a74" class="javax.swing.JLabel" binding="Etkinlik_koltuk_sonuc_lbl">
-        <constraints>
-          <grid row="6" column="2" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Sonuç"/>
-        </properties>
-      </component>
       <hspacer id="ee4fc">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -111,70 +95,6 @@
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <component id="c8eaf" class="javax.swing.JLabel" binding="blt_etkinlik_musteriad_lbl">
-        <constraints>
-          <grid row="2" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Müşteri Ad-Soyad : "/>
-        </properties>
-      </component>
-      <component id="ca46d" class="javax.swing.JLabel" binding="blt_etkinlik_musteritel_lbl">
-        <constraints>
-          <grid row="3" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Müşteri Tel No : "/>
-        </properties>
-      </component>
-      <component id="3bda1" class="javax.swing.JLabel" binding="blt_etkinlik_mustericinsiyet_lbl">
-        <constraints>
-          <grid row="4" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Cinsiyet : "/>
-        </properties>
-      </component>
-      <component id="3b4e1" class="javax.swing.JLabel" binding="blt_etkinlik_fiyat_lbl">
-        <constraints>
-          <grid row="5" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Ücret : "/>
-        </properties>
-      </component>
-      <component id="4d93c" class="javax.swing.JLabel" binding="blt_etkinlik_musteriad_sonuc_lbl">
-        <constraints>
-          <grid row="2" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Sonuç"/>
-        </properties>
-      </component>
-      <component id="e7bc" class="javax.swing.JLabel" binding="blt_etkinlik_musteritel_sonuc_lbl">
-        <constraints>
-          <grid row="3" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Sonuç"/>
-        </properties>
-      </component>
-      <component id="5b9e9" class="javax.swing.JLabel" binding="blt_etkinlik_mustericinsiyet_sonuc_lbl">
-        <constraints>
-          <grid row="4" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Sonuç"/>
-        </properties>
-      </component>
-      <component id="6bf07" class="javax.swing.JLabel" binding="blt_etkinlik_fiyat_sonuc_lbl">
-        <constraints>
-          <grid row="5" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Sonuç"/>
-        </properties>
-      </component>
       <hspacer id="e5732">
         <constraints>
           <grid row="3" column="9" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -185,6 +105,22 @@
           <grid row="2" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
+      <component id="7dab5" class="javax.swing.JLabel" binding="blt_salon_sonuc_lbl">
+        <constraints>
+          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sonuç"/>
+        </properties>
+      </component>
+      <component id="c4e81" class="javax.swing.JLabel" binding="blt_etkinlikSalon_lbl">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Salon : "/>
+        </properties>
+      </component>
       <component id="d9d49" class="javax.swing.JLabel" binding="blt_kasaNo_lbl">
         <constraints>
           <grid row="6" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -199,6 +135,70 @@
         </constraints>
         <properties>
           <text value="Sonuç"/>
+        </properties>
+      </component>
+      <component id="3b4e1" class="javax.swing.JLabel" binding="blt_etkinlik_fiyat_lbl">
+        <constraints>
+          <grid row="5" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Ücret : "/>
+        </properties>
+      </component>
+      <component id="6bf07" class="javax.swing.JLabel" binding="blt_etkinlik_fiyat_sonuc_lbl">
+        <constraints>
+          <grid row="5" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sonuç"/>
+        </properties>
+      </component>
+      <component id="e7bc" class="javax.swing.JLabel" binding="blt_etkinlik_musteritel_sonuc_lbl">
+        <constraints>
+          <grid row="4" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sonuç"/>
+        </properties>
+      </component>
+      <component id="4d93c" class="javax.swing.JLabel" binding="blt_etkinlik_musteriad_sonuc_lbl">
+        <constraints>
+          <grid row="3" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sonuç"/>
+        </properties>
+      </component>
+      <component id="a7a74" class="javax.swing.JLabel" binding="Etkinlik_koltuk_sonuc_lbl">
+        <constraints>
+          <grid row="2" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Sonuç"/>
+        </properties>
+      </component>
+      <component id="ca46d" class="javax.swing.JLabel" binding="blt_etkinlik_musteritel_lbl">
+        <constraints>
+          <grid row="4" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Müşteri Tel No : "/>
+        </properties>
+      </component>
+      <component id="c8eaf" class="javax.swing.JLabel" binding="blt_etkinlik_musteriad_lbl">
+        <constraints>
+          <grid row="3" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Müşteri Ad-Soyad : "/>
+        </properties>
+      </component>
+      <component id="9b8e8" class="javax.swing.JLabel" binding="blt_etkinlik_koltuk_lbl">
+        <constraints>
+          <grid row="2" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Seçilen Koltuk No : "/>
         </properties>
       </component>
     </children>

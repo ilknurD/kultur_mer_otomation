@@ -350,29 +350,14 @@ public class Bilet_Satin_Alma extends JFrame {
                 String etkinlikTuru = (String) cmb_etkinlikTuru.getSelectedItem();
                 String etkinlikAdi = (String) cmb_etkinlikAdi.getSelectedItem();
                 String seans = (String) cmb_seans.getSelectedItem();
-                String musteriAdi = fld_musteriAd.getText().trim();
+                String musteriAd = fld_musteriAd.getText().trim();
+                String musteriSoyad = fld_musteriSoyad.getText().trim();
                 String musteriTel = fld_musteriTel.getText().trim();
+                String salon = fld_salon.getText().trim();
+                String fiyat = fld_fiyat.getText().trim();
+                String koltuk_Secimi = koltuk_no_lbl.getText().trim();
+                String kasaNo = (String) cmb_kasaNo.getSelectedItem();
 
-
-                JPanel panel = new JPanel(new GridLayout(0, 1));
-                panel.add(new JLabel("Etkinlik Türü: " + etkinlikTuru));
-                panel.add(new JLabel("Etkinlik Adı: " + etkinlikAdi));
-                panel.add(new JLabel("Tarih: " + tarih_secimi));
-                panel.add(new JLabel("Seans: " + seans));
-                // panel.add(new JLabel("Koltuk Seçimi" + koltuk_Secimi));
-                panel.add(new JLabel("Müşteri Adı: " + musteriAdi));
-                panel.add(new JLabel("Telefon: " + musteriTel));
-
-
-                Bilet_Bilgi biletBilgiForm = new Bilet_Bilgi();
-                biletBilgiForm.setVisible(true);
-
-                biletBilgiForm.updateEtkinlikTur(etkinlikTuru);
-                biletBilgiForm.updateEtkinlikAd(etkinlikAdi);
-                biletBilgiForm.updateEtkinlikTarih(tarih_secimi);
-                biletBilgiForm.updateEtkinlikSeans(seans);
-                biletBilgiForm.updateEtkinlikMusteriAd(musteriAdi);
-                biletBilgiForm.updateEtkinlikMusteritel(musteriTel);
 
                 try {
                     int musteriId = musteriKaydet(fld_musteriAd.getText().trim(), fld_musteriSoyad.getText().trim(),fld_musteriTel.getText().trim());
@@ -392,12 +377,16 @@ public class Bilet_Satin_Alma extends JFrame {
 
                             Bilet_Bilgi biletBilgi = new Bilet_Bilgi();
                             biletBilgi.setVisible(true);
-                            biletBilgi.updateEtkinlikTur((String) cmb_etkinlikTuru.getSelectedItem());
-                            biletBilgi.updateEtkinlikAd((String) cmb_etkinlikAdi.getSelectedItem());
-                            biletBilgi.updateEtkinlikTarih(fld_etkinlikTarih.getText());
-                            biletBilgi.updateEtkinlikSeans((String) cmb_seans.getSelectedItem());
-                            biletBilgi.updateEtkinlikMusteriAd(fld_musteriAd.getText().trim());
-                            biletBilgi.updateEtkinlikMusteritel(fld_musteriTel.getText().trim());
+                            biletBilgi.updateEtkinlikTur(etkinlikTuru);
+                            biletBilgi.updateEtkinlikAd(etkinlikAdi);
+                            biletBilgi.updateEtkinlikTarih(tarih_secimi);
+                            biletBilgi.updateEtkinlikSeans(seans);
+                            biletBilgi.updateEtkinlikMusteriAd(musteriAd +" "+ musteriSoyad);
+                            biletBilgi.updateEtkinlikMusteritel(musteriTel);
+                            biletBilgi.updateSalon(salon);
+                            biletBilgi.updateEtkinlikFiyat(fiyat);
+                            biletBilgi.updateKasaNo(kasaNo);
+                            biletBilgi.updateKoltukNo(koltuk_Secimi);
                         }
                     }
                 }catch (SQLException ex){

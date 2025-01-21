@@ -11,13 +11,6 @@ public class kisi {
 
     }
 
-
-    public void kisi_ekle(){};
-    public void kisi_sil(){};
-    public void kisi_guncelle(){};
-    public void kisi_listele(){};
-    public void kisi_yetki(){};
-
     public enum Type{
         mudur,
         kasiyer,

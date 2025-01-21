@@ -19,7 +19,7 @@ public class Login  extends JFrame {
         add(Loginpnl);
         setTitle("Login");
         setSize(600,600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         Giris_lbl.setFont(new Font("Serif", Font.BOLD, 20));

@@ -10,7 +10,6 @@ public class Bilet_Bilgi extends JFrame{
     private JLabel Etkinlik_koltuk_sonuc_lbl;
     private JLabel blt_etkinlik_musteriad_sonuc_lbl;
     private JLabel blt_etkinlik_musteritel_sonuc_lbl;
-    private JLabel blt_etkinlik_mustericinsiyet_sonuc_lbl;
     private JLabel blt_etkinlik_fiyat_sonuc_lbl;
     private JPanel Bilet_Bilgi_pnl;
     private JLabel blt_etkinlik_tur_lbl;
@@ -24,6 +23,8 @@ public class Bilet_Bilgi extends JFrame{
     private JLabel blt_etkinlik_fiyat_lbl;
     private JLabel blt_kasaNo_lbl;
     private JLabel blt_kasaNo_sonuc_lbl;
+    private JLabel blt_etkinlikSalon_lbl;
+    private JLabel blt_salon_sonuc_lbl;
 
 
     public void updateEtkinlikTur(String etkinlikTuru) {
@@ -44,11 +45,17 @@ public class Bilet_Bilgi extends JFrame{
     public void updateEtkinlikMusteritel(String musteriTel){
         blt_etkinlik_musteritel_sonuc_lbl.setText(musteriTel);
     }
-    public void updateMusteriCinsiyet(String cinsiyet){
-        blt_etkinlik_mustericinsiyet_sonuc_lbl.setText(cinsiyet);
-    }
     public void updateEtkinlikFiyat(String fiyat){
         blt_etkinlik_fiyat_sonuc_lbl.setText(fiyat);
+    }
+    public void updateSalon(String salon){
+        blt_salon_sonuc_lbl.setText(salon);
+    }
+    public void updateKoltukNo(String koltukNo){
+        Etkinlik_koltuk_sonuc_lbl.setText(koltukNo);
+    }
+    public void updateKasaNo(String kasaNo){
+        blt_kasaNo_sonuc_lbl.setText(kasaNo);
     }
 
     public Bilet_Bilgi(){
@@ -68,7 +75,6 @@ public class Bilet_Bilgi extends JFrame{
         blt_etkinlik_musteriad_sonuc_lbl.setFont(new Font("Serif", Font.ITALIC, 18));
         blt_etkinlik_musteritel_sonuc_lbl.setFont(new Font("Serif", Font.ITALIC, 18));
         blt_etkinlik_fiyat_sonuc_lbl.setFont(new Font("Serif", Font.ITALIC, 18));
-        blt_etkinlik_mustericinsiyet_sonuc_lbl.setFont(new Font("Serif", Font.ITALIC, 18));
         blt_etkinlik_tur_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_etkinlik_ad_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_etkinlik_tarih_lbl.setFont(new Font("Serif", Font.BOLD, 18));
@@ -76,13 +82,11 @@ public class Bilet_Bilgi extends JFrame{
         blt_etkinlik_koltuk_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_etkinlik_musteriad_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_etkinlik_musteritel_lbl.setFont(new Font("Serif", Font.BOLD, 18));
-        blt_etkinlik_mustericinsiyet_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_etkinlik_fiyat_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_kasaNo_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         blt_kasaNo_sonuc_lbl.setFont(new Font("Serif", Font.ITALIC, 18));
-
-
-
+        blt_salon_sonuc_lbl.setFont(new Font("Serif", Font.ITALIC, 18));
+        blt_etkinlikSalon_lbl.setFont(new Font("Serif", Font.BOLD, 18));
     }
 
 }
