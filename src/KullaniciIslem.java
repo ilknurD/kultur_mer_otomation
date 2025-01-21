@@ -24,7 +24,7 @@ public class KullaniciIslem {
             ps.setString(2, pass);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Kasiyer kasiyer = new Kasiyer();  // Nesneyi burada oluştur
+                Kasiyer kasiyer = new Kasiyer();
                 Kisi = kasiyer;
                 Kisi.setId(rs.getInt("kasiyer_id"));
                 Kisi.setMail(rs.getString("kasiyer_eposta"));

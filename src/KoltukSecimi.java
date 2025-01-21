@@ -162,7 +162,7 @@ public class KoltukSecimi extends JFrame {
             }
         }
 
-    private void refreshKoltuklar() {
+    private void refreshKoltuklar() { //dolu olanları kırmızı diğerleri yeşil
         doluKoltuklar = getDoluKoltuklar();
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {

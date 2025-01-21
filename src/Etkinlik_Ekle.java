@@ -214,7 +214,6 @@ public class Etkinlik_Ekle extends JFrame {
                     }
 
                     if (result){
-                        Helper.Mesaj("basarili");
                         dispose();
                     }else{
                         Helper.Mesaj("error");
