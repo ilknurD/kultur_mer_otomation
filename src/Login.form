@@ -47,7 +47,7 @@
           <text value="Şifre : "/>
         </properties>
       </component>
-      <component id="ccf3e" class="javax.swing.JButton" binding="button1" default-binding="true">
+      <component id="ccf3e" class="javax.swing.JButton" binding="btn_giris">
         <constraints>
           <grid row="7" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

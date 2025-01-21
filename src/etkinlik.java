@@ -123,23 +123,18 @@ public class etkinlik {
         Etkinlik.setEtkinlik_ad(rs.getString("etkinlik_adi"));
         Etkinlik.setEtkinlik_turu(etkinlik.TYPE.valueOf(rs.getString("etkinlik_turu")));
 
-        // Veritabanından gelen tarih
         String veritabaniTarihi = rs.getString("etkinlik_tarihi");
 
-        // Tarih dönüşüm işlemi
         try {
-            // Veritabanındaki format: yyyy-MM-dd
             SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date tarih = veritabaniFormat.parse(veritabaniTarihi); // Veritabanından gelen tarihi Date nesnesine çevir
 
-            // Kullanıcıya uygun format: dd/MM/yyyy
             SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String kullaniciTarihi = kullaniciFormat.format(tarih); // Kullanıcı formatında tarih
+            String kullaniciTarihi = kullaniciFormat.format(tarih);
 
-            Etkinlik.setEtkinlik_tar(kullaniciTarihi); // Kullanıcıya uygun formatta tarihi ayarla
+            Etkinlik.setEtkinlik_tar(kullaniciTarihi);
         } catch (ParseException e) {
-            // Hata durumunda orijinal tarihi kullan
-            Etkinlik.setEtkinlik_tar(veritabaniTarihi);
+            Etkinlik.setEtkinlik_tar(veritabaniTarihi); // Hata durumunda orijinal tarihi kullan
         }
 
         Etkinlik.setSalon_id(rs.getInt("salon_id"));

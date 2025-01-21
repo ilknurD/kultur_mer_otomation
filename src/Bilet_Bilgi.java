@@ -19,7 +19,6 @@ public class Bilet_Bilgi extends JFrame{
     private JLabel blt_etkinlik_koltuk_lbl;
     private JLabel blt_etkinlik_musteriad_lbl;
     private JLabel blt_etkinlik_musteritel_lbl;
-    private JLabel blt_etkinlik_mustericinsiyet_lbl;
     private JLabel blt_etkinlik_fiyat_lbl;
     private JLabel blt_kasaNo_lbl;
     private JLabel blt_kasaNo_sonuc_lbl;

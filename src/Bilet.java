@@ -246,7 +246,6 @@ public class Bilet {
         karsilastirBilet.setEtkinlikTuru(RS.getString("etkinlik_turu"));
         karsilastirBilet.setEtkinlikAdi(RS.getString("etkinlik_adi"));
 
-        // Etkinlik tarihi
         String etkinlikTarih = RS.getString("etkinlik_tarihi");
         karsilastirBilet.setEtkinlikTarih(formatTarih(etkinlikTarih));
 
@@ -255,7 +254,6 @@ public class Bilet {
         karsilastirBilet.setMusteriSoyad(RS.getString("soyad"));
         karsilastirBilet.setMusteriTelefon(RS.getString("telefon"));
 
-        // Satış tarihi
         String satisTarih = RS.getString("tarih");
         karsilastirBilet.setTarih(formatTarih(satisTarih));
 

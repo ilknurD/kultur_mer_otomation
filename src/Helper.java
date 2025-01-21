@@ -15,24 +15,6 @@ public class Helper {
 
     }
 
-
-    public static String convertDateFormat(String dateStr) {
-        try {
-            // Eski format (dd/MM/yyyy)
-            SimpleDateFormat oldFormat = new SimpleDateFormat("dd/MM/yyyy");
-            // Yeni format (yyyy-MM-dd)
-            SimpleDateFormat newFormat = new SimpleDateFormat("yyyy/MM/dd");
-
-            // Tarih string'ini Date objesine dönüştür
-            Date date = oldFormat.parse(dateStr);
-
-            // Tarihi yeni formata çevir ve döndür
-            return newFormat.format(date);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;  // Hata durumunda null döndür
-        }
-    }
     public static String TarihKontrol(String dateStr, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
         try {

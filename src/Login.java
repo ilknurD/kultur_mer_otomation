@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 public class Login  extends JFrame {
     private JTextField fld_eposta;
-    private JButton button1;
+    private JButton btn_giris;
     private JPanel Loginpnl;
     private JLabel Giris_lbl;
     private JLabel eposta_lbl;
@@ -25,7 +25,7 @@ public class Login  extends JFrame {
         Giris_lbl.setFont(new Font("Serif", Font.BOLD, 20));
         eposta_lbl.setFont(new Font("Serif", Font.BOLD, 18));
         sifre_lbl.setFont(new Font("Serif", Font.BOLD, 18));
-        button1.setFont(new Font("Serif", Font.BOLD, 18));
+        btn_giris.setFont(new Font("Serif", Font.BOLD, 18));
         fld_eposta.setFont(new Font("Serif", Font.BOLD, 18));
         fld_pass.setFont(new Font("Serif", Font.BOLD, 18));
         sifrechck.setFont(new Font("Serif", Font.BOLD, 10));
@@ -37,7 +37,7 @@ public class Login  extends JFrame {
         JLabel imgLbl = img_lbl;
         imgLbl.setIcon(scaledIcon);
 
-        button1.addActionListener(new ActionListener() {
+        btn_giris.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JTextField[] listekontrol = {fld_eposta, fld_pass};

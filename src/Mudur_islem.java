@@ -45,7 +45,6 @@ public class Mudur_islem extends JFrame {
     private JButton btn_f_calisanlar_temizle;
     private JButton btn_f_calisanlar_ekle;
     private JLabel lbl_f_calisanAdi;
-    private JLabel lbl_f_maas;
     private JLabel lbl_f_calisanTuru;
     private JTextField fld_f_biletler_kasaNo;
     private JLabel lbl_f_biletler_kasaNo;
@@ -62,43 +61,43 @@ public class Mudur_islem extends JFrame {
     public Calisan calisan = new Calisan();
     private UserSession session;
 
-    public ArrayList<etkinlik> query(String query) { //sorguyu dışardan alıp ona göre listeleme yapabilelim diye
-        ArrayList<etkinlik> etkinlikListeleme = new ArrayList<>();
+
+    public ArrayList<etkinlik> filtreleEtkinlik(String etkinlik_adi, etkinlik.TYPE etkinlik_turu) {
+        ArrayList<etkinlik> etkinlikListesi = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM etkinlikler e " +
+                "LEFT JOIN salonlar s ON e.salon_id = s.salon_id");
+
+        ArrayList<String> kosullar = new ArrayList<>();
+
+        if (etkinlik_adi != null && !etkinlik_adi.trim().isEmpty()) {
+            kosullar.add("e.etkinlik_adi LIKE '%" + etkinlik_adi + "%'");
+        }
+        if (etkinlik_turu != null) {
+            kosullar.add("e.etkinlik_turu = '" + etkinlik_turu + "'");
+        }
+
+        if (!kosullar.isEmpty()) {
+            query.append(" WHERE ").append(String.join(" AND ", kosullar));
+        }
+
         try {
-            etkinlik Etkinlik = new etkinlik();
-            ResultSet rs = this.conn.createStatement().executeQuery(query);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query.toString());
+
             while (rs.next()) {
-                etkinlikListeleme.add(Etkinlik.etkinlikCekVeritabani(rs));
+                etkinlikListesi.add(Etkinlik.etkinlikCekVeritabani(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            Helper.Mesaj("Etkinlikleri listelerken bir hata oluştu.");
         }
-        return etkinlikListeleme;
-    }
 
-    public ArrayList<etkinlik> filtreleEtkinlik(String etkinlik_adi, etkinlik.TYPE etkinlik_turu) {
-        String query = "SELECT * FROM etkinlikler";
-        DefaultTableModel model = (DefaultTableModel) tbl_etkinlikler.getModel();
-        model.setRowCount(0);
-
-        ArrayList<String> Listele = new ArrayList<>();
-
-        if (etkinlik_adi.length() > 0) {
-            Listele.add("etkinlik_adi LIKE '%" + etkinlik_adi + "%'");
-        }
-        if (etkinlik_turu != null) {
-            Listele.add("etkinlik_turu = '" + etkinlik_turu + "'");
-        }
-        if (Listele.size() > 0) {
-            String listeleQuery = String.join("AND ", Listele); //BİRLEŞTİR ALDIĞIN BİLGİLERİ
-            query += " WHERE " + listeleQuery;
-        }
-        return query(query);
+        return etkinlikListesi;
     }
 
     public ArrayList<Bilet> filtreleBilet(String musteriAdi, int kasaNo, etkinlik.TYPE etkinlikTuru) {
         ArrayList<Bilet> biletListesi = new ArrayList<>();
-        StringBuilder query = new StringBuilder("SELECT * FROM biletler b " +
+        StringBuilder query = new StringBuilder("SELECT * FROM biletler b " + //builder dinamik olsun diye
                 "LEFT JOIN musteriler m ON b.musteri_id = m.musteri_id " +
                 "LEFT JOIN etkinlikler e ON b.etkinlik_id = e.etkinlik_id " +
                 "LEFT JOIN salonlar s ON b.salon_id = s.salon_id " +
@@ -252,14 +251,12 @@ public class Mudur_islem extends JFrame {
         });
 
         tabbedPane1.addChangeListener(e -> {
-            // Tab değiştiğinde session'ı yeniliyoruz
-            this.session = UserSession.getInstance();
+            this.session = UserSession.getInstance(); // Tab değiştiğinde session'ı yeniliyoruz
         });
 
 
-        //Etlinlikler TAB
         this.cmb_f_etkinlikler_turu.setModel(new DefaultComboBoxModel<>(etkinlik.TYPE.values())); //Türleri comboya aktardımm
-        this.cmb_f_etkinlikler_turu.setSelectedItem(null); //seçili olmasın
+        this.cmb_f_etkinlikler_turu.setSelectedItem(null);
         ArrayList<etkinlik> etkinlikler = Etkinlik.etkinlikListele();
         YukleEtkinliklerTable(etkinlikler);
 
@@ -269,21 +266,12 @@ public class Mudur_islem extends JFrame {
         YukleBiletlerTable(biletler);
 
         cmb_f_calisanTuru.setModel(new DefaultComboBoxModel<>(new String[]{"Müdürler", "Kasiyerler"}));
-        cmb_f_calisanTuru.setSelectedItem("Müdürler"); // Varsayılan olarak "Müdürler" seçili
-        YukleCalisanlarTable(null, null); // Başlangıçta müdürleri listele
+        cmb_f_calisanTuru.setSelectedItem("Müdürler"); // varsayılan
+        YukleCalisanlarTable(null, null);
 
-        btn_f_etkinlikler_ara.addActionListener(new ActionListener() {
-            private AbstractButton tbl_etkinlikler;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DefaultTableModel model = (DefaultTableModel) tbl_etkinlikler.getModel();
-                model.setRowCount(0);
-                YukleEtkinliklerTable(etkinlikler);
-            }
-        });
-        YukleEtkinliklerPopup();
         YukleEtkinliklerButtonIslem();
+        YukleEtkinliklerPopup();
 
         YukleBiletlerButtonIslem();
         YukleBiletlerPopup();
@@ -305,7 +293,7 @@ public class Mudur_islem extends JFrame {
             Etkinlik_Ekle etkinlik_ekle = new Etkinlik_Ekle(new etkinlik());
             etkinlik_ekle.setVisible(true);
             etkinlik_ekle.addWindowListener(new WindowAdapter() {
-                public void windowClosed(WindowEvent e) { //pencere kapandığında
+                public void windowClosed(WindowEvent e) {
                     ArrayList<etkinlik> etkinlikler = Etkinlik.etkinlikListele();
                     mdl_etkinlikler_t.setRowCount(0);
                     YukleEtkinliklerTable(etkinlikler);
@@ -313,14 +301,13 @@ public class Mudur_islem extends JFrame {
             });
         });
 
-        this.btn_f_etkinlikler_ara.addActionListener(e -> {
-            ArrayList<etkinlik> FiltrelenenEtkinlikler = this.filtreleEtkinlik(
-                    this.fld_f_etkinlikler_adi.getText(),
-                    (etkinlik.TYPE) this.cmb_f_etkinlikler_turu.getSelectedItem()
-            );
+        btn_f_etkinlikler_ara.addActionListener(e -> {
+            String etkinlikAdi = fld_f_etkinlikler_adi.getText().trim();
+            etkinlik.TYPE etkinlikTuru = (etkinlik.TYPE) cmb_f_etkinlikler_turu.getSelectedItem();
 
-            YukleEtkinliklerTable(FiltrelenenEtkinlikler);
-
+            ArrayList<etkinlik> filtrelenenEtkinlikler = filtreleEtkinlik(etkinlikAdi, etkinlikTuru);
+            mdl_etkinlikler_t.setRowCount(0);
+            YukleEtkinliklerTable(filtrelenenEtkinlikler);
         });
 
         this.btn_f_etkinlikler_temizle.addActionListener(e -> {
@@ -329,7 +316,6 @@ public class Mudur_islem extends JFrame {
             YukleEtkinliklerTable(Etkinlik.etkinlikListele());
             this.fld_f_etkinlikler_adi.setText(null);
             this.cmb_f_etkinlikler_turu.setSelectedItem(null);
-
         });
     }
 
@@ -394,36 +380,29 @@ public class Mudur_islem extends JFrame {
 
     public void YukleEtkinliklerTable(ArrayList<etkinlik> etkinlikler) {
         Object[] columnEtkinlikler = {"ID", "Etkinlik Türü", "Etkinlik Adı", "Etkinlik Tarihi", "Salon", "Fiyat"};
-        this.mdl_etkinlikler_t.setColumnIdentifiers(columnEtkinlikler); //modelin başlıklarını üstte belirlediklerim olsun
+        this.mdl_etkinlikler_t.setColumnIdentifiers(columnEtkinlikler);
         for (etkinlik Etkinlik : etkinlikler) {
-            // Tarih dönüştürme işlemi
-            String tarihGorunum = Etkinlik.getEtkinlik_tar(); // Varsayılan olarak veritabanından gelen tarih
+            String tarihGorunum = Etkinlik.getEtkinlik_tar();
             try {
                 SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-                // Tarihi uygun formata dönüştür
                 String veritabaniTarih = Etkinlik.getEtkinlik_tar();
 
                 if (veritabaniTarih.contains("/")) {
                     veritabaniTarih = veritabaniTarih.replace("/", "-");
                 }
 
-                /// Önce java.sql.Date'e çevir
                 java.sql.Date sqlDate = java.sql.Date.valueOf(veritabaniTarih);
-                // Sonra istenen formata dönüştür
                 tarihGorunum = kullaniciFormat.format(sqlDate);
 
-            } catch (IllegalArgumentException e) {
-//                System.out.println("Tarih dönüştürme hatası: " + e.getMessage());
-//                // Hata durumunda orijinal tarihi kullan
-            }
+            } catch (IllegalArgumentException e) {}
 
             Object[] rowObject = {
                     Etkinlik.getEtkinlikid(),
                     Etkinlik.getEtkinlik_turu(),
                     Etkinlik.getEtkinlik_ad(),
-                    tarihGorunum, // Dönüştürülmüş tarihi kullan
+                    tarihGorunum,
                     Etkinlik.getSalon_id(),
                     Etkinlik.getEtkinlikFiyat()
             };
@@ -451,11 +430,9 @@ public class Mudur_islem extends JFrame {
             biletler = this.bilet.biletListele();
         }
 
-        SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         for (Bilet bilet : biletler) {
-            // Etkinlik tarihini dönüştürme
             String etkinlikTarihGorunum = bilet.getEtkinlikTarih();
             try {
                 if (etkinlikTarihGorunum.contains("/")) {
@@ -463,11 +440,8 @@ public class Mudur_islem extends JFrame {
                 }
                 java.sql.Date sqlEtkinlikTarih = java.sql.Date.valueOf(etkinlikTarihGorunum);
                 etkinlikTarihGorunum = kullaniciFormat.format(sqlEtkinlikTarih);
-            } catch (IllegalArgumentException e) {
-                // Hata durumunda orijinal tarihi kullan
-            }
+            } catch (IllegalArgumentException e) {}
 
-            // Satılma tarihini dönüştürme
             String satilmaTarihiGorunum = bilet.getTarih();
             try {
                 if (satilmaTarihiGorunum.contains("/")) {
@@ -475,9 +449,7 @@ public class Mudur_islem extends JFrame {
                 }
                 java.sql.Date sqlSatilmaTarihi = java.sql.Date.valueOf(satilmaTarihiGorunum);
                 satilmaTarihiGorunum = kullaniciFormat.format(sqlSatilmaTarihi);
-            } catch (IllegalArgumentException e) {
-                // Hata durumunda orijinal tarihi kullan
-            }
+            } catch (IllegalArgumentException e) {}
 
             Object[] row = new Object[]{
                     bilet.getBiletId(),
@@ -524,8 +496,6 @@ public class Mudur_islem extends JFrame {
                     kasaNo,
                     etkinlikTuru
             );
-
-
             YukleBiletlerTable(FiltrelenenBiletler);
         });
 
@@ -551,23 +521,19 @@ public class Mudur_islem extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // Tablo üzerinden seçili satır kontrolü
                     if (tbl_biletler.getSelectedRow() == -1) {
                         JOptionPane.showMessageDialog(null, "Lütfen bir bilet seçiniz!");
                         return;
                     }
 
-                    // Seçili bileti veritabanından al
                     int seciliId = Integer.parseInt(tbl_biletler.getValueAt(tbl_biletler.getSelectedRow(), 0).toString());
-                    Bilet seciliBilet = bilet.getBiletById(seciliId); // Veritabanından bileti getiren bir metot olmalı
+                    Bilet seciliBilet = bilet.getBiletById(seciliId);
 
                     if (seciliBilet != null) {
-                        // Bilet güncelleme penceresini aç
                         Bilet_guncelle bilet_guncelle = new Bilet_guncelle(seciliBilet);
-                        bilet_guncelle.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Pencereyi düzgün kapatmak için
+                        bilet_guncelle.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                         bilet_guncelle.setVisible(true);
 
-                        // Pencere kapandığında sadece tabloyu güncelle
                         bilet_guncelle.addWindowListener(new WindowAdapter() {
                             @Override
                             public void windowClosed(WindowEvent e) {
@@ -729,7 +695,6 @@ public class Mudur_islem extends JFrame {
                     return;
                 }
 
-                // Sadece genel müdürlerin silme işlemi yapabilmesi için kontrol ekliyoruz
                 if (!UserSession.getInstance().GenelMudurKontrol()) {
                     Helper.Mesaj("Sadece genel müdürler çalışanları silebilir!");
                     return;
@@ -779,10 +744,7 @@ public class Mudur_islem extends JFrame {
 
                 ArrayList<Object[]> filtrelenenCalisanlar = filtreleCalisanlar(calisanAdi, calisanTipi);
 
-                // Tablo modelini temizle
                 mdl_calisanlar_t.setRowCount(0);
-
-                // Filtrelenmiş sonuçları tabloya ekle
                 for (Object[] row : filtrelenenCalisanlar) {
                     mdl_calisanlar_t.addRow(row);
                 }
@@ -792,11 +754,8 @@ public class Mudur_islem extends JFrame {
         });
 
         btn_f_calisanlar_temizle.addActionListener(e -> {
-            // Filtreleme alanlarını temizle
             fld_f_calisanAdi.setText("");
-            cmb_f_calisanTuru.setSelectedItem("Müdürler"); // Varsayılan seçenek
-
-            // Tabloyu yeniden yükle
+            cmb_f_calisanTuru.setSelectedItem("Müdürler");
             YukleCalisanlarTable(null, null);
         });
 

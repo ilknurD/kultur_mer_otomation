@@ -9,11 +9,9 @@ public class UserSession { //Singleton tasarımı kullandım. Yalnızca tek bir 
     private String mudurDepartman;
     Connection conn = VeriTabaniBaglantisi.getConnection();
 
-    // Başka yerden sınıf örneği oluşturulamaz
-    private UserSession() {}
+    private UserSession() {} // Başka yerden sınıf örneği oluşturulamaz
 
-    // Singleton örneğine erişim metodu
-    public static UserSession getInstance() {
+    public static UserSession getInstance() {   //erişim metodu
         if (instance == null) {
             instance = new UserSession();
         }

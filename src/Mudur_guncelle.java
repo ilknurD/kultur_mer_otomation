@@ -53,8 +53,7 @@ public class Mudur_guncelle extends JFrame {
         cmb_mudur_departman.addItem("Sinema");
         cmb_mudur_departman.addItem("Müzikal");
 
-        // Eğer güncelleme ise alanları doldur
-        if (isUpdate) {
+        if (isUpdate) { // güncelleme ise alanları doldur
             fld_mudur_ad.setText(mudur.getAd());
             fld_mudur_soyad.setText(mudur.getSoyad());
             fld_mudur_eposta.setText(mudur.getMail());

@@ -11,7 +11,6 @@ public class VeriTabaniBaglantisi {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println("Bağlantı başarılı!");
         } catch (Exception e) {
             System.out.println("Bağlantı sırasında bir hata oluştu: " + e.getMessage());
             Helper.Mesaj(e.getMessage());

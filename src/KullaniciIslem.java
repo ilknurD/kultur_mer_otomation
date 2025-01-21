@@ -56,36 +56,6 @@ public class KullaniciIslem {
                 throw new RuntimeException(e);
             }
         }
-
-        return Kisi;
-    }
-
-
-    public kisi karsilastirKasiyer(ResultSet rs) throws SQLException {
-        kisi Kisi = new kisi();
-        Calisan calisan = new Calisan();
-        Kasiyer kasiyer = new Kasiyer();
-
-        Kisi.setId(rs.getInt("kasiyer_id"));
-        Kisi.setMail(rs.getString("kasiyer_eposta"));
-        calisan.setSifre(rs.getString("kasiyer_sifre"));
-        calisan.setMaas(rs.getInt("kasiyer_maas"));
-        kasiyer.setKasaNo(rs.getInt("kasiyer_kasaNo"));
-
-        return Kisi;
-    }
-
-    public kisi karsilastirMudur(ResultSet rs) throws SQLException {
-        kisi Kisi = new kisi();
-        Calisan calisan = new Calisan();
-        Mudur mudur = new Mudur();
-
-        Kisi.setId(rs.getInt("mudur_id"));
-        Kisi.setMail(rs.getString("mudur_eposta"));
-        calisan.setSifre(rs.getString("mudur_sifre"));
-        calisan.setMaas(rs.getInt("mudur_maas"));
-        mudur.setDepartman(rs.getString("mudur_departman"));
-
         return Kisi;
     }
 

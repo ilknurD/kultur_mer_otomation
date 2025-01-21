@@ -39,17 +39,15 @@ public class Etkinlik_Ekle extends JFrame {
                 "WHERE etkinlik_id=?";
         this.conn = VeriTabaniBaglantisi.getConnection();
         try {
-            // Veritabanından gelen tarihi almak
-            String gelenTarih = Etkinlik.getEtkinlik_tar(); // Etkinlik nesnesinde tarih zaten var
+            String gelenTarih = Etkinlik.getEtkinlik_tar();
             SimpleDateFormat kullaniciFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date tarih;
 
             try {
-                tarih = kullaniciFormat.parse(gelenTarih);  // Veritabanından gelen tarih
+                tarih = kullaniciFormat.parse(gelenTarih);
             } catch (ParseException e) {
                 return false;
             }
-            //Tarihi veritabanı formatına çevir (yyyy-MM-dd)
             SimpleDateFormat veritabaniFormat = new SimpleDateFormat("yyyy-MM-dd");
             String veritabaniTarihi = veritabaniFormat.format(tarih);
 
@@ -61,7 +59,7 @@ public class Etkinlik_Ekle extends JFrame {
             pr.setInt(5,Etkinlik.getEtkinlikFiyat());
             pr.setInt(6,Etkinlik.getEtkinlikid());
 
-            int rowsAffected = pr.executeUpdate(); // Güncellenen satır sayısını al
+            int rowsAffected = pr.executeUpdate(); // Güncellenen satır sayısı
             if (rowsAffected > 0) {
                 Helper.Mesaj("Etkinlik başarıyla güncellendi.");
                 return true;
@@ -94,38 +92,34 @@ public class Etkinlik_Ekle extends JFrame {
     }
 
     public boolean etknlkkaydet(etkinlik Etkinlik) {
-        // Veritabanı bağlantısı nesnesi
         this.conn = VeriTabaniBaglantisi.getConnection();
 
         try {
-            // Önce kullanıcıdan alınan tarihi DD/MM/YYYY formatında parse ediyoruz
-            String fld_tarihi = Etkinlik.getEtkinlik_tar(); // Etkinlik nesnesindeki tarihi al
+            String fld_tarihi = Etkinlik.getEtkinlik_tar();
             SimpleDateFormat girisFormati = new SimpleDateFormat("dd/MM/yyyy");
             girisFormati.setLenient(false); // Tarih doğruluğunu kontrol eder
 
             Date tarih;
             try {
-                tarih = girisFormati.parse(fld_tarihi); // Tarihi parse et
+                tarih = girisFormati.parse(fld_tarihi);
             } catch (ParseException e) {
                 Helper.Mesaj("Tarih formatı hatalı. Lütfen 'dd/MM/yyyy' formatında bir tarih giriniz.");
                 return false;
             }
 
-            // Ardından, tarihi veritabanına uygun olan YYYY-MM-DD formatına dönüştürüyoruz
             SimpleDateFormat veritabaniFormati = new SimpleDateFormat("yyyy-MM-dd");
-            String veritabaniTarihi = veritabaniFormati.format(tarih); // Veritabanı için formatlanmış tarih
+            String veritabaniTarihi = veritabaniFormati.format(tarih);
 
             String query = "INSERT INTO etkinlikler (etkinlik_adi, etkinlik_turu, etkinlik_tarihi, salon_id, etkinlik_fiyati) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement pr = this.conn.prepareStatement(query);
             pr.setString(1, Etkinlik.getEtkinlik_ad());
             pr.setString(2, Etkinlik.getEtkinlik_turu().toString());
-            pr.setString(3, veritabaniTarihi);  // Formatlanmış tarihi ekle
+            pr.setString(3, veritabaniTarihi);
             pr.setInt(4, Etkinlik.getSalon_id());
             pr.setInt(5, Etkinlik.getEtkinlikFiyat());
 
-            // Sorguyu çalıştırma ve sonuç kontrolü
             int result = pr.executeUpdate();
-            return result > 0;  // Eğer etkilenen satır sayısı sıfırdan büyükse işlem başarılı
+            return result > 0;  // etkilenen satır sayısı sıfırdan büyükse başarılı
 
         } catch (SQLException e) {
             Helper.Mesaj("Veri tabanı bağlantı hatası: " + e.getMessage());
@@ -136,7 +130,7 @@ public class Etkinlik_Ekle extends JFrame {
             return false;
         } finally {
             try {
-                if (this.conn != null) this.conn.close();  // Bağlantıyı kapatmayı unutmayın
+                if (this.conn != null) this.conn.close();
             } catch (SQLException e) {
                 Helper.Mesaj("Veri tabanı bağlantısı kapatılamadı: " + e.getMessage());
             }
